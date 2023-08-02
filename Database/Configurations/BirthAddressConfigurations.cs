@@ -11,9 +11,9 @@ namespace siades.Database.Configurations
            builder
                 .HasKey(p => p.Id);
             builder
-                .HasMany(p => p.People)
-                .WithOne(p => p.GetBirthAddress);
-            
+                .HasMany(p => p.People);
+            //.WithOne(p => p.GetBirthAddress);
+
             builder.Property(p => p.TownShiepId)
                 .Metadata.IsForeignKey();
 

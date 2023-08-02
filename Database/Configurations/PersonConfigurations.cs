@@ -17,6 +17,11 @@ namespace siades.Database.Configurations
                 .HasMaxLength(250);
 
             builder
+                .Property(p => p.BirthAddress)
+                .IsRequired()
+                .HasMaxLength(250);
+
+            builder
                 .Property(p => p.IdentDocNumber)
                 .IsRequired()
                 .HasMaxLength(15)
@@ -30,11 +35,7 @@ namespace siades.Database.Configurations
             builder
                 .Property(p => p.AddressId)
                 .Metadata.IsForeignKey();
-            
-            builder
-                .Property(p => p.BirthAddressId)
-                .Metadata.IsForeignKey();
-            
+
             builder
                 .Property(p => p.BloodId)
                 .Metadata.IsForeignKey();
@@ -46,11 +47,7 @@ namespace siades.Database.Configurations
             builder
                 .HasOne(x => x.GetAddress)
                 .WithMany(x => x.People);
-            
-            builder
-                .HasOne(x => x.GetBirthAddress)
-                .WithMany(x => x.People);
-            
+
             builder
                 .HasOne(x => x.GetContact)
                 

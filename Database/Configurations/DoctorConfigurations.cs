@@ -16,18 +16,14 @@ namespace siades.Database.Configurations
                 .IsRequired()
                 .HasMaxLength(50)
                 .Metadata.IsUniqueIndex();
-            
-            builder
-                . Property(p => p.SpecialityId)
-                .Metadata.IsForeignKey();
 
             builder
                 . Property(p => p.PersonId)
                 .Metadata.IsForeignKey();
 
             builder
-                .HasOne(x => x.GetSpeciality)
-                .WithMany(x => x.Doctors);
+                .HasMany(x => x.Specialities)
+                .WithOne(x => x.GetDoctor);
             
             builder
                 .HasOne(x => x.GetPerson)

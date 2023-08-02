@@ -1,6 +1,6 @@
 namespace siades.Services.DTOs
 {
-    public class TownShiepDTO
+    public class SpecialityDTO
     {
         public string? Name { get; set; }
     }

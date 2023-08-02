@@ -18,11 +18,12 @@ public class Person : EntityDefault
     public Guid BirthAddressId { get; set; }
     public Guid ContactId { get; set; }
     public Guid BloodId { get; set; }
+    public string? BirthAddress { get; set; }
     
     //relacionamentos
     public Contact? GetContact { get; set; }
     public Address? GetAddress { get; set; }
-    public BirthAddress? GetBirthAddress { get; set; }
+    //public BirthAddress? GetBirthAddress { get; set; }
     public Blood? GetBlood { get; set; }
 
     public ICollection<Doctor> DoctorsList { get; set; }

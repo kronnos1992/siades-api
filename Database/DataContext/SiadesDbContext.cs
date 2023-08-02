@@ -15,7 +15,7 @@ namespace siades.Database.DataContext
         public DbSet<Address>? Tb_Address { get; set; }
         public DbSet<Person>? Tb_Person { get; set; }
         public DbSet<Contact>? Tb_Contact { get; set; }
-        public DbSet<BirthAddress>? Tb_BirthAddress { get; set; }
+        //public DbSet<BirthAddress>? Tb_BirthAddress { get; set; }
         public DbSet<Province>? Tb_Province { get; set; }
         public DbSet<Country>? Tb_Country { get; set; }
         public DbSet<Doctor>? Tb_Doctor { get; set; }

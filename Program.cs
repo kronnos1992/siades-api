@@ -1,15 +1,10 @@
-using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using siades.Database.DataContext;
 using siades.Services.Interfaces;
 using siades.Services.Repositories;
@@ -36,9 +31,8 @@ builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddDataProtection().UseCryptographicAlgorithms(
-    new AuthenticatedEncryptorConfiguration
-    {
+builder.Services.AddDataProtection().UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+{
         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
     });
@@ -60,6 +54,8 @@ builder.Services.AddTransient<IBloodRepository, BloodRepository>();
 builder.Services.AddTransient<ICountryRepository, CountryRepository>();
 builder.Services.AddTransient<IProvinceRepository, ProvinceRepository>();
 builder.Services.AddTransient<ITownshiepRepository, TownShiepRepository>();
+builder.Services.AddTransient<ISpecialityRepository, SpecialityRepository>();
+builder.Services.AddScoped<IDoctoRepository, DoctoRepository>();
 var app = builder.Build();
 
 
@@ -69,6 +65,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors(options =>{
     options
         .AllowAnyOrigin()

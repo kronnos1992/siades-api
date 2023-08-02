@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using siades.Database.DataContext;
 
@@ -11,9 +12,11 @@ using siades.Database.DataContext;
 namespace siades.Database.Persistence.Migrations
 {
     [DbContext(typeof(SiadesDbContext))]
-    partial class SiadesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230731200200_Doctor Specialities")]
+    partial class DoctorSpecialities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +96,7 @@ namespace siades.Database.Persistence.Migrations
 
                     b.HasIndex("TownShiepId");
 
-                    b.ToTable("BirthAddress");
+                    b.ToTable("Tb_BirthAddress");
                 });
 
             modelBuilder.Entity("siades.Models.Blood", b =>
@@ -247,6 +250,9 @@ namespace siades.Database.Persistence.Migrations
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("SpecialityId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -383,11 +389,6 @@ namespace siades.Database.Persistence.Migrations
 
                     b.Property<Guid>("AddressId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BirthAddress")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
 
                     b.Property<Guid>("BirthAddressId")
                         .HasColumnType("uniqueidentifier");
@@ -699,7 +700,7 @@ namespace siades.Database.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("siades.Models.BirthAddress", null)
+                    b.HasOne("siades.Models.BirthAddress", "GetBirthAddress")
                         .WithMany("People")
                         .HasForeignKey("BirthAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -718,6 +719,8 @@ namespace siades.Database.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("GetAddress");
+
+                    b.Navigation("GetBirthAddress");
 
                     b.Navigation("GetBlood");
 
