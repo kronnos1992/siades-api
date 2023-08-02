@@ -7,7 +7,7 @@ namespace siades.Models
         public TownShiep()
         {
             AddressesList = new HashSet<Address>();
-            BirthAddressesList = new HashSet<BirthAddress>();
+            //BirthAddressesList = new HashSet<BirthAddress>();
         }
         public string? TownName { get; set; }
         // chave estrangeira da provincia
@@ -15,6 +15,6 @@ namespace siades.Models
         // relacionamento municipio provincia
         public Province? GetProvince { get; set; }
         public ICollection<Address>? AddressesList { get; set; }
-        public ICollection<BirthAddress>? BirthAddressesList { get; set; }
+        //public ICollection<BirthAddress>? BirthAddressesList { get; set; }
     }
 }

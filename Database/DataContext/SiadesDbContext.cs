@@ -31,7 +31,7 @@ namespace siades.Database.DataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new AddressConfiguration());
-            modelBuilder.ApplyConfiguration(new BirthAddressConfigurations());
+            //modelBuilder.ApplyConfiguration(new BirthAddressConfigurations());
             modelBuilder.ApplyConfiguration(new BloodConfigurations());
             modelBuilder.ApplyConfiguration(new BloodRequestConfigurations());
             modelBuilder.ApplyConfiguration(new DonorConfigurations());

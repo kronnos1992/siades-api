@@ -17,11 +17,6 @@ namespace siades.Database.Configurations
                 .HasMaxLength(250);
 
             builder
-                .Property(p => p.BirthAddress)
-                .IsRequired()
-                .HasMaxLength(250);
-
-            builder
                 .Property(p => p.IdentDocNumber)
                 .IsRequired()
                 .HasMaxLength(15)

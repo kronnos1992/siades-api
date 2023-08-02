@@ -25,10 +25,6 @@ namespace siades.Database.Configurations
                 .WithOne(x => x.GetTownShiep);
 
             builder
-                .HasMany(x => x.BirthAddressesList)
-                .WithOne(x => x.GetTownShiep);
-
-            builder
                 .HasOne(x => x.GetProvince)
                 .WithMany(x => x.TownShiepsList);
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace siades.Database.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMihgration : Migration
+    public partial class Review : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -173,29 +173,6 @@ namespace siades.Database.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tb_BirthAddress",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BirthStreet = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    BirthHouseNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    BirthNeighborHud = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TownShiepId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tb_BirthAddress", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tb_BirthAddress_Tb_TownShiep_TownShiepId",
-                        column: x => x.TownShiepId,
-                        principalTable: "Tb_TownShiep",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Tb_Hospital",
                 columns: table => new
                 {
@@ -225,7 +202,6 @@ namespace siades.Database.Persistence.Migrations
                     IdentDocNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     TypeIdentNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BirthAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BloodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -238,12 +214,6 @@ namespace siades.Database.Persistence.Migrations
                         name: "FK_Tb_Person_Tb_Address_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Tb_Address",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_Tb_Person_Tb_BirthAddress_BirthAddressId",
-                        column: x => x.BirthAddressId,
-                        principalTable: "Tb_BirthAddress",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
@@ -293,7 +263,6 @@ namespace siades.Database.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SpecialityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -305,12 +274,6 @@ namespace siades.Database.Persistence.Migrations
                         name: "FK_Tb_Doctor_Tb_Person_PersonId",
                         column: x => x.PersonId,
                         principalTable: "Tb_Person",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_Tb_Doctor_Tb_Speciality_SpecialityId",
-                        column: x => x.SpecialityId,
-                        principalTable: "Tb_Speciality",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
@@ -336,6 +299,33 @@ namespace siades.Database.Persistence.Migrations
                         name: "FK_Tb_Donor_Tb_Person_PersonId",
                         column: x => x.PersonId,
                         principalTable: "Tb_Person",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpecialityDoctor",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DoctorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SpecialityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpecialityDoctor", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpecialityDoctor_Tb_Doctor_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "Tb_Doctor",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_SpecialityDoctor_Tb_Speciality_SpecialityId",
+                        column: x => x.SpecialityId,
+                        principalTable: "Tb_Speciality",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
@@ -417,13 +407,18 @@ namespace siades.Database.Persistence.Migrations
                 column: "HospitalServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tb_Address_TownShiepId",
-                table: "Tb_Address",
-                column: "TownShiepId");
+                name: "IX_SpecialityDoctor_DoctorId",
+                table: "SpecialityDoctor",
+                column: "DoctorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tb_BirthAddress_TownShiepId",
-                table: "Tb_BirthAddress",
+                name: "IX_SpecialityDoctor_SpecialityId",
+                table: "SpecialityDoctor",
+                column: "SpecialityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tb_Address_TownShiepId",
+                table: "Tb_Address",
                 column: "TownShiepId");
 
             migrationBuilder.CreateIndex(
@@ -445,11 +440,6 @@ namespace siades.Database.Persistence.Migrations
                 name: "IX_Tb_Doctor_PersonId",
                 table: "Tb_Doctor",
                 column: "PersonId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tb_Doctor_SpecialityId",
-                table: "Tb_Doctor",
-                column: "SpecialityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tb_Donation_DonorId",
@@ -476,11 +466,6 @@ namespace siades.Database.Persistence.Migrations
                 name: "IX_Tb_Person_AddressId",
                 table: "Tb_Person",
                 column: "AddressId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tb_Person_BirthAddressId",
-                table: "Tb_Person",
-                column: "BirthAddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tb_Person_BloodId",
@@ -516,10 +501,10 @@ namespace siades.Database.Persistence.Migrations
                 name: "RelHospService");
 
             migrationBuilder.DropTable(
-                name: "Tb_BloodRequest");
+                name: "SpecialityDoctor");
 
             migrationBuilder.DropTable(
-                name: "Tb_Doctor");
+                name: "Tb_BloodRequest");
 
             migrationBuilder.DropTable(
                 name: "Tb_Donation");
@@ -528,10 +513,13 @@ namespace siades.Database.Persistence.Migrations
                 name: "HospitalService");
 
             migrationBuilder.DropTable(
-                name: "Tb_Hospital");
+                name: "Tb_Doctor");
 
             migrationBuilder.DropTable(
                 name: "Tb_Speciality");
+
+            migrationBuilder.DropTable(
+                name: "Tb_Hospital");
 
             migrationBuilder.DropTable(
                 name: "Tb_Donor");
@@ -544,9 +532,6 @@ namespace siades.Database.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tb_Address");
-
-            migrationBuilder.DropTable(
-                name: "Tb_BirthAddress");
 
             migrationBuilder.DropTable(
                 name: "Tb_Blood");

@@ -26,11 +26,11 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewDoctor([FromBody] DoctorDTO entity, Guid provinceId, Guid bloodId)
+        public async Task<IActionResult> AddNewDoctor([FromBody] DoctorDTO entity, Guid townId, Guid bloodId)
         {
             try
             {
-                await repository.NewDoctor(entity, provinceId, bloodId);
+                await repository.NewDoctor(entity, townId, bloodId);
                 return Ok();
             }
             catch (Exception ex)

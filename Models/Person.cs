@@ -15,11 +15,11 @@ public class Person : EntityDefault
     
     //chaves estrangeiras
     public Guid AddressId { get; set; }
-    public Guid BirthAddressId { get; set; }
+    //public Guid BirthAddressId { get; set; }
     public Guid ContactId { get; set; }
     public Guid BloodId { get; set; }
-    public string? BirthAddress { get; set; }
-    
+    //public string? BirthAddress { get; set; }
+
     //relacionamentos
     public Contact? GetContact { get; set; }
     public Address? GetAddress { get; set; }

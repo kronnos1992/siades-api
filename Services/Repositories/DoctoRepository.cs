@@ -86,7 +86,7 @@ namespace siades.Services.Repositories
                 // doctor
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,
-                DocNumber = entity.DocNumber,
+                DocNumber = entity.DoctorNumber,
 
                 //Person
                 GetPerson = new Person
@@ -95,15 +95,15 @@ namespace siades.Services.Repositories
                     CreatedAt = DateTime.Now,
                     //person
                     FullName = entity.FullName,
-                    IdentDocNumber = entity.DocNumber,
-                    TypeIdentNumber = entity.TypeIdentDoc,
+                    IdentDocNumber = entity.IdNumber,
+                    TypeIdentNumber = entity.TypeDocId,
 
                     GetContact = new Contact
                     {
                         Id = Guid.NewGuid(),
                         CreatedAt = DateTime.Now,
                         // contact
-                        PhoneNumeber = entity.PhoneNumeber,
+                        PhoneNumeber = entity.PhoneNumber,
                         HousePhoneNumber = entity.HouseNumber,
                         EmailAdrress = entity.EmailAdrress,
                     },

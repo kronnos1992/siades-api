@@ -59,43 +59,6 @@ namespace siades.Database.Persistence.Migrations
                     b.ToTable("Tb_Address");
                 });
 
-            modelBuilder.Entity("siades.Models.BirthAddress", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BirthHouseNumber")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("BirthNeighborHud")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("BirthStreet")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TownShiepId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TownShiepId");
-
-                    b.ToTable("BirthAddress");
-                });
-
             modelBuilder.Entity("siades.Models.Blood", b =>
                 {
                     b.Property<Guid>("Id")
@@ -384,14 +347,6 @@ namespace siades.Database.Persistence.Migrations
                     b.Property<Guid>("AddressId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BirthAddress")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<Guid>("BirthAddressId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("BloodId")
                         .HasColumnType("uniqueidentifier");
 
@@ -422,8 +377,6 @@ namespace siades.Database.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
-
-                    b.HasIndex("BirthAddressId");
 
                     b.HasIndex("BloodId");
 
@@ -603,17 +556,6 @@ namespace siades.Database.Persistence.Migrations
                     b.Navigation("GetTownShiep");
                 });
 
-            modelBuilder.Entity("siades.Models.BirthAddress", b =>
-                {
-                    b.HasOne("siades.Models.TownShiep", "GetTownShiep")
-                        .WithMany("BirthAddressesList")
-                        .HasForeignKey("TownShiepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GetTownShiep");
-                });
-
             modelBuilder.Entity("siades.Models.BloodRequest", b =>
                 {
                     b.HasOne("siades.Models.Donor", "GetDonor")
@@ -696,12 +638,6 @@ namespace siades.Database.Persistence.Migrations
                     b.HasOne("siades.Models.Address", "GetAddress")
                         .WithMany("People")
                         .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("siades.Models.BirthAddress", null)
-                        .WithMany("People")
-                        .HasForeignKey("BirthAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -802,11 +738,6 @@ namespace siades.Database.Persistence.Migrations
                     b.Navigation("People");
                 });
 
-            modelBuilder.Entity("siades.Models.BirthAddress", b =>
-                {
-                    b.Navigation("People");
-                });
-
             modelBuilder.Entity("siades.Models.Blood", b =>
                 {
                     b.Navigation("ListRequest");
@@ -866,8 +797,6 @@ namespace siades.Database.Persistence.Migrations
             modelBuilder.Entity("siades.Models.TownShiep", b =>
                 {
                     b.Navigation("AddressesList");
-
-                    b.Navigation("BirthAddressesList");
                 });
 #pragma warning restore 612, 618
         }
