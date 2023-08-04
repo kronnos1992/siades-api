@@ -5,7 +5,7 @@ namespace siades.Models
     [Serializable]
     public class BloodRequest : EntityDefault
     {
-        public bool AskingAcepted { get; set; } = false;
+        public bool IsAcepted { get; set; } = false;
         public string? DiseasedName { get; set; }
         public bool IsHomeDonor { get; set; } = false;
         public bool HasFamDonor { get; set; } = false;

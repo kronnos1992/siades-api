@@ -11,8 +11,8 @@ namespace siades.Services.Interfaces
     {
         Task <IEnumerable<Donor>> GetValues();
         Task<Donor> GetValue(Guid id);
-        Task NewDonor(DonorDTO entity);
-        Task<Donor> Update(DonorDTO entity, Guid Id);
+        Task NewDonor(DonorDTO entity, Guid bloodId, Guid townId);
+        Task<Donor> Update(DonorDTO entity, Guid id);
         Task Delete(Guid id);
     }
 }

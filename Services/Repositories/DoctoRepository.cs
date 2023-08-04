@@ -49,7 +49,9 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var list = await dbcontext.Tb_Doctor.ToListAsync();
+                var list = await dbcontext.Tb_Doctor
+                    .Include(x => x.Specialities)
+                    .ToListAsync();
                 return list;
                 //throw new NullReferenceException($"Nenhum valor encontrado");
             }
@@ -61,85 +63,126 @@ namespace siades.Services.Repositories
 
         public async Task LinkDocSpeciality(Guid doctor, Guid speciality)
         {
-            var getDoctor = await dbcontext.Tb_Doctor.FindAsync(doctor);
-            var getSpeciality = await dbcontext.Tb_Speciality.FindAsync(speciality);
-
-            var newData = new SpecialityDoctor
+            try
             {
-                Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                GetDoctor = getDoctor,
-                GetSpeciality = getSpeciality
-            };
+                var getDoctor = await dbcontext.Tb_Doctor.FindAsync(doctor);
+                var getSpeciality = await dbcontext.Tb_Speciality.FindAsync(speciality);
 
-            await dbcontext.AddAsync(newData);
-            await dbcontext.SaveChangesAsync();
+                var newData = new SpecialityDoctor
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedAt = DateTime.Now,
+                    GetDoctor = getDoctor,
+                    GetSpeciality = getSpeciality
+                };
+
+                await dbcontext.AddAsync(newData);
+                await dbcontext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task NewDoctor(DoctorDTO entity, Guid townId, Guid bloodId)
         {
-            var townShiep = dbcontext.Tb_TownShiep.SingleOrDefault(x => x.Id == townId);
-            var blood = dbcontext.Tb_Blood.SingleOrDefault(x => x.Id == bloodId);
-
-            var newDoctor = new Doctor
+            try
             {
-                // doctor
-                Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                DocNumber = entity.DoctorNumber,
+                var townShiep = dbcontext.Tb_TownShiep.SingleOrDefault(x => x.Id == townId);
+                var blood = dbcontext.Tb_Blood.SingleOrDefault(x => x.Id == bloodId);
 
-                //Person
-                GetPerson = new Person
+                var newDoctor = new Doctor
                 {
+                    // doctor
                     Id = Guid.NewGuid(),
                     CreatedAt = DateTime.Now,
-                    //person
-                    FullName = entity.FullName,
-                    IdentDocNumber = entity.IdNumber,
-                    TypeIdentNumber = entity.TypeDocId,
+                    DocNumber = entity.DoctorNumber,
 
-                    GetContact = new Contact
+                    //Person
+                    GetPerson = new Person
                     {
                         Id = Guid.NewGuid(),
                         CreatedAt = DateTime.Now,
-                        // contact
-                        PhoneNumeber = entity.PhoneNumber,
-                        HousePhoneNumber = entity.HouseNumber,
-                        EmailAdrress = entity.EmailAdrress,
+                        //person
+                        FullName = entity.FullName,
+                        IdentDocNumber = entity.IdNumber,
+                        TypeIdentNumber = entity.TypeDocId,
+
+                        GetContact = new Contact
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedAt = DateTime.Now,
+                            // contact
+                            PhoneNumeber = entity.PhoneNumber,
+                            HousePhoneNumber = entity.HouseNumber,
+                            EmailAdrress = entity.EmailAdrress,
+                        },
+
+                        GetAddress = new Address
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedAt = DateTime.Now,
+                            //address
+                            Street = entity.Street,
+                            HouseNumber = entity.HouseNumber,
+                            NeighborHud = entity.NeighborHud,
+                            GetTownShiep = townShiep
+                        },
+                        GetBlood = blood
                     },
 
-                    GetAddress = new Address
-                    {
-                        Id = Guid.NewGuid(),
-                        CreatedAt = DateTime.Now,
-                        //address
-                        Street = entity.Street,
-                        HouseNumber = entity.HouseNumber,
-                        NeighborHud = entity.NeighborHud,
-                        GetTownShiep = townShiep
-                    },
-                    GetBlood = blood
-                },
+                };
 
-            };
+                await dbcontext.AddRangeAsync(newDoctor);
+                await dbcontext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
 
-            await dbcontext.AddRangeAsync(newDoctor);
-            await dbcontext.SaveChangesAsync();
-
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<Doctor> Update(DoctorDTO entity, Guid Id)
         {
-            var doctor = await dbcontext.Tb_Doctor
-                .FirstOrDefaultAsync(x => x.Id == Id);
-            if (doctor == null)
+            try
+            {
+                var doctor = await dbcontext.Tb_Doctor
+                    .FirstOrDefaultAsync(x => x.Id == Id);
+                if (doctor.ToString().Length > 0)
+                {
+                    doctor.UpdatedAt = DateTime.Now;
+                    doctor.GetPerson.CreatedAt = DateTime.Now;
+                    doctor.GetPerson.GetContact.UpdatedAt = DateTime.Now;
+                    doctor.GetPerson.GetAddress.UpdatedAt = DateTime.Now;
+
+                    doctor.DocNumber = entity.DoctorNumber.Trim().ToUpper();
+                    doctor.GetPerson.IdentDocNumber = entity.IdNumber.Trim().ToUpper();
+                    doctor.GetPerson.TypeIdentNumber = entity.TypeDocId.Trim().ToUpper();
+                    doctor.GetPerson.FullName = entity.FullName.Trim().ToUpper();
+                    doctor.GetPerson.GetContact.PhoneNumeber = entity.PhoneNumber.Trim().ToUpper();
+                    doctor.GetPerson.GetContact.HousePhoneNumber = entity.HousePhoneNumber.Trim().ToUpper();
+                    doctor.GetPerson.GetContact.EmailAdrress = entity.EmailAdrress.Trim().ToUpper();
+                    doctor.GetPerson.GetAddress.Street = entity.Street.Trim().ToUpper();
+                    doctor.GetPerson.GetAddress.HouseNumber = entity.HouseNumber.Trim().ToUpper();
+                    doctor.GetPerson.GetAddress.NeighborHud = entity.NeighborHud.Trim().ToUpper();
+
+                    dbcontext.UpdateRange(doctor);
+                    await dbcontext.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new NullReferenceException("Registro não encontrado");
+                }
+                return doctor;
+            }
+            catch (Exception ex)
             {
 
+                throw new Exception("", ex);
             }
-            dbcontext.UpdateRange(doctor);
-            await dbcontext.SaveChangesAsync();
-
-            return doctor;
         }
     }
 }

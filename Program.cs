@@ -55,7 +55,9 @@ builder.Services.AddTransient<ICountryRepository, CountryRepository>();
 builder.Services.AddTransient<IProvinceRepository, ProvinceRepository>();
 builder.Services.AddTransient<ITownshiepRepository, TownShiepRepository>();
 builder.Services.AddTransient<ISpecialityRepository, SpecialityRepository>();
+builder.Services.AddTransient<IHospitalRepository, HospitalRepository>();
 builder.Services.AddScoped<IDoctoRepository, DoctoRepository>();
+builder.Services.AddScoped<IDonoRepository, DonoRepository>();
 var app = builder.Build();
 
 
