@@ -30,9 +30,6 @@ namespace siades.Database.Configurations
                     .IsRequired()
                     .HasMaxLength(50);
 
-            builder.Property(p => p.TownShiepId)
-                   .Metadata.IsForeignKey();
-                   
         }
     }
 }

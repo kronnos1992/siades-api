@@ -28,15 +28,6 @@ namespace siades.Database.Configurations
             builder
                 .HasOne(p => p.GetDonor);
 
-            builder
-                .Property(p => p.DonorId)
-                .Metadata.IsForeignKey();
-            
-            builder
-                .Property(p => p.HospitalId)
-                .Metadata.IsForeignKey();
-            
-                
         }
     }
 }

@@ -16,15 +16,10 @@ namespace siades.Database.Configurations
                 .IsRequired()
                 .HasMaxLength(50)
                 .Metadata.IsUniqueIndex();
-            
+
             builder
-                .Property(x => x.AddressId)
-                .Metadata.IsForeignKey();
-            
-            builder
-                .HasOne(x => x.GetAddress)
-                .WithOne(x => x.GetHospital);
-            
+                .HasOne(x => x.GetAddress);
+
             builder
                 .HasMany(x => x.ListRequest)
                 .WithOne(x => x.GetHospital); 

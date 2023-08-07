@@ -2,18 +2,18 @@
 
 #nullable disable
 
-namespace siades.Database.Persistence.Migrations
+namespace siades.Database.Persistence
 {
     /// <inheritdoc />
-    public partial class ReviewDonor0 : Migration
+    public partial class Review3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsElegilbe",
-                table: "Tb_Donor",
-                type: "bit",
+            migrationBuilder.AddColumn<string>(
+                name: "BloodGroup",
+                table: "Tb_BloodRequest",
+                type: "nvarchar(max)",
                 nullable: true);
         }
 
@@ -21,8 +21,8 @@ namespace siades.Database.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsElegilbe",
-                table: "Tb_Donor");
+                name: "BloodGroup",
+                table: "Tb_BloodRequest");
         }
     }
 }

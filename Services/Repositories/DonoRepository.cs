@@ -14,7 +14,7 @@ public class DonoRepository : IDonoRepository
     {
         this.dbContext = dbContext;
     }
-    public async Task Delete(Guid id)
+    public async Task Delete(int id)
     {
         try
         {
@@ -32,7 +32,7 @@ public class DonoRepository : IDonoRepository
         }
     }
 
-    public async Task<Donor> GetValue(Guid id)
+    public async Task<Donor> GetValue(int id)
     {
         try
         {
@@ -70,38 +70,36 @@ public class DonoRepository : IDonoRepository
         }
     }
 
-    public async Task NewDonor(DonorDTO entity, Guid bloodId, Guid townId)
+    public async Task NewDonor(DonorDTO entity, int bloodId, int townId)
     {
         try
         {
-            var blood = await dbContext.Tb_Blood
-            .FirstOrDefaultAsync(x => x.Id == bloodId);
+            var town = dbContext.Tb_TownShiep
+                .SingleOrDefault(x => x.Id == townId);
 
-            var town = await dbContext.Tb_TownShiep
-                .FirstOrDefaultAsync(x => x.Id == townId);
-
+            var blood = dbContext.Tb_Blood
+                .SingleOrDefault(x => x.Id == bloodId);
 
             var donor = new Donor
             {
-                Id = Guid.NewGuid(),
+
                 RefNumber = string.Concat(new Random().Next(0, 99) + "/" + DateTime.Now.Year),
                 CreatedAt = DateTime.Now,
                 DonorType = entity.DonorType.Trim().ToUpper(),
                 IsElegilbe = entity.IsElegilbe,
-                FirstGivenDate = entity.FirstGivenDate,
+                BloodGroupName = blood.BloodGroupName,
 
                 GetPerson = new Person
                 {
-                    Id = Guid.NewGuid(),
+
                     CreatedAt = DateTime.Now,
                     FullName = entity.FullName.ToUpper(),
                     IdentDocNumber = entity.IdentDocNumber.Trim().ToUpper(),
                     TypeIdentNumber = entity.TypeIdentNumber.ToUpper(),
 
-                    GetBlood = blood,
                     GetAddress = new Address
                     {
-                        Id = Guid.NewGuid(),
+
                         CreatedAt = DateTime.Now,
                         Street = entity.Street.Trim().ToUpper(),
                         HouseNumber = entity.HouseNumber.Trim().ToUpper(),
@@ -111,12 +109,13 @@ public class DonoRepository : IDonoRepository
 
                     GetContact = new Contact
                     {
-                        Id = Guid.NewGuid(),
+
                         CreatedAt = DateTime.Now,
                         PhoneNumeber = entity.PhoneNumber,
                         EmailAdrress = entity.EmailAdrress,
                         HousePhoneNumber = entity.HousePhoneNumber,
-                    }
+                    },
+                    GetBlood = blood,
                 }
             };
             await dbContext.AddRangeAsync(donor);
@@ -124,11 +123,11 @@ public class DonoRepository : IDonoRepository
         }
         catch (Exception ex)
         {
-            throw new Exception("", ex);
+            throw new Exception(ex.Message);
         }
     }
 
-    public async Task<Donor> Update(DonorDTO entity, Guid id)
+    public async Task<Donor> Update(DonorDTO entity, int id)
     {
         try
         {
@@ -143,7 +142,6 @@ public class DonoRepository : IDonoRepository
                 donor.GetPerson.GetAddress.UpdatedAt = DateTime.Now;
                 donor.DonorType = entity.DonorType;
                 donor.IsElegilbe = entity.IsElegilbe;
-                donor.FirstGivenDate = entity.FirstGivenDate;
 
 
                 donor.GetPerson.IdentDocNumber = entity.IdentDocNumber.Trim().ToUpper();

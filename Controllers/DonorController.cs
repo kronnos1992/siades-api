@@ -26,11 +26,11 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewDonor([FromBody] DonorDTO entity, Guid townId, Guid bloodId)
+        public async Task<IActionResult> AddNewDonor([FromBody] DonorDTO entity, int bloodId, int townId)
         {
             try
             {
-                await repository.NewDonor(entity, townId, bloodId);
+                await repository.NewDonor(entity, bloodId, townId);
                 return Ok();
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace siades.Controllers
         [Route("getone")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetAsync(Guid id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace siades.Controllers
         [HttpPut]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Update([FromBody] DonorDTO entity, Guid id)
+        public async Task<IActionResult> Update([FromBody] DonorDTO entity, int id)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace siades.Controllers
         [HttpDelete]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {

@@ -8,7 +8,6 @@ public class Contact : EntityDefault
     public string? PhoneNumeber { get; set; }
     public string? EmailAdrress { get; set; }
     public string? HousePhoneNumber { get; set; }
-    public Guid PersonId { get; set; }
     public Person? GetPerson { get; set; }
     
 }

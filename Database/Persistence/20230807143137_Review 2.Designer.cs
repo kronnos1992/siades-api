@@ -9,11 +9,11 @@ using siades.Database.DataContext;
 
 #nullable disable
 
-namespace siades.Database.Persistence.Migrations
+namespace siades.Database.Persistence
 {
     [DbContext(typeof(SiadesDbContext))]
-    [Migration("20230802190439_Review")]
-    partial class Review
+    [Migration("20230807143137_Review 2")]
+    partial class Review2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,12 +27,17 @@ namespace siades.Database.Persistence.Migrations
 
             modelBuilder.Entity("siades.Models.Address", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("GetTownShiepId")
+                        .HasColumnType("int");
 
                     b.Property<string>("HouseNumber")
                         .IsRequired()
@@ -49,24 +54,23 @@ namespace siades.Database.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("TownShiepId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TownShiepId");
+                    b.HasIndex("GetTownShiepId");
 
                     b.ToTable("Tb_Address");
                 });
 
             modelBuilder.Entity("siades.Models.Blood", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BloodGroupName")
                         .IsRequired()
@@ -81,20 +85,19 @@ namespace siades.Database.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BloodGroupName")
+                        .IsUnique();
+
                     b.ToTable("Tb_Blood");
                 });
 
             modelBuilder.Entity("siades.Models.BloodRequest", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<bool>("AskingAcepted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("BloodDescriptionId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -107,40 +110,48 @@ namespace siades.Database.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid>("DonorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("GetBloodId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("GetBloodId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("GetDonorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GetHospitalId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("HasFamDonor")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("HospitalId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<bool>("IsAcepted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsHomeDonor")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DonorId");
-
                     b.HasIndex("GetBloodId");
 
-                    b.HasIndex("HospitalId");
+                    b.HasIndex("GetDonorId");
+
+                    b.HasIndex("GetHospitalId");
 
                     b.ToTable("Tb_BloodRequest");
                 });
 
             modelBuilder.Entity("siades.Models.Contact", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -152,9 +163,6 @@ namespace siades.Database.Persistence.Migrations
 
                     b.Property<string>("HousePhoneNumber")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhoneNumeber")
                         .IsRequired()
@@ -171,9 +179,11 @@ namespace siades.Database.Persistence.Migrations
 
             modelBuilder.Entity("siades.Models.Country", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CountryName")
                         .IsRequired()
@@ -198,9 +208,16 @@ namespace siades.Database.Persistence.Migrations
 
             modelBuilder.Entity("siades.Models.Doctor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BloodGroupName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -210,51 +227,67 @@ namespace siades.Database.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("GetPersonId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("BloodGroupName")
+                        .IsUnique();
+
+                    b.HasIndex("GetPersonId");
 
                     b.ToTable("Tb_Doctor");
                 });
 
             modelBuilder.Entity("siades.Models.Donation", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BloodGroup")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DonorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("DonorId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("StockHoldId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DonorId");
+                    b.HasIndex("BloodGroup")
+                        .IsUnique();
 
-                    b.HasIndex("StockHoldId");
+                    b.HasIndex("DonorId");
 
                     b.ToTable("Tb_Donation");
                 });
 
             modelBuilder.Entity("siades.Models.Donor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BloodGroupName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -264,8 +297,11 @@ namespace siades.Database.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("FirstGivenDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("GetPersonId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsElegilbe")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastGivenDate")
                         .HasColumnType("datetime2");
@@ -273,35 +309,37 @@ namespace siades.Database.Persistence.Migrations
                     b.Property<DateTime>("NextGivenDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("RefNumber")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("RemaingDays")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("GetPersonId");
 
                     b.ToTable("Tb_Donor");
                 });
 
             modelBuilder.Entity("siades.Models.Hospital", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AddressId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("GetAddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("HospitalName")
                         .IsRequired()
@@ -313,48 +351,21 @@ namespace siades.Database.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId")
-                        .IsUnique();
+                    b.HasIndex("GetAddressId");
 
                     b.ToTable("Tb_Hospital");
                 });
 
-            modelBuilder.Entity("siades.Models.HospitalService", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HospitalService");
-                });
-
             modelBuilder.Entity("siades.Models.Person", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AddressId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("BloodId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContactId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("ContactId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -363,6 +374,12 @@ namespace siades.Database.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
+
+                    b.Property<int?>("GetAddressId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GetBloodId")
+                        .HasColumnType("int");
 
                     b.Property<string>("IdentDocNumber")
                         .IsRequired()
@@ -379,24 +396,24 @@ namespace siades.Database.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
-
-                    b.HasIndex("BloodId");
-
                     b.HasIndex("ContactId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ContactId] IS NOT NULL");
+
+                    b.HasIndex("GetAddressId");
+
+                    b.HasIndex("GetBloodId");
 
                     b.ToTable("Tb_Person");
                 });
 
             modelBuilder.Entity("siades.Models.Province", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CountryId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -404,6 +421,9 @@ namespace siades.Database.Persistence.Migrations
                     b.Property<string>("GeoLocation")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("GetCountryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProvinceName")
                         .IsRequired()
@@ -415,43 +435,18 @@ namespace siades.Database.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CountryId");
+                    b.HasIndex("GetCountryId");
 
                     b.ToTable("Tb_Province");
                 });
 
-            modelBuilder.Entity("siades.Models.RelHospService", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("HospitalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("HospitalServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HospitalId");
-
-                    b.HasIndex("HospitalServiceId");
-
-                    b.ToTable("RelHospService");
-                });
-
             modelBuilder.Entity("siades.Models.Speciality", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -471,39 +466,37 @@ namespace siades.Database.Persistence.Migrations
 
             modelBuilder.Entity("siades.Models.SpecialityDoctor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("GetDoctorId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("SpecialityId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("GetSpecialityId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex("GetDoctorId");
 
-                    b.HasIndex("SpecialityId");
+                    b.HasIndex("GetSpecialityId");
 
                     b.ToTable("SpecialityDoctor");
                 });
 
             modelBuilder.Entity("siades.Models.StockHold", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BloodId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("StockHoldId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -514,24 +507,27 @@ namespace siades.Database.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("StockHoldId");
 
-                    b.HasIndex("BloodId");
+                    b.HasIndex("StockHoldId")
+                        .IsUnique();
 
                     b.ToTable("Tb_StockHold");
                 });
 
             modelBuilder.Entity("siades.Models.TownShiep", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProvinceId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("GetProvinceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("TownName")
                         .IsRequired()
@@ -543,7 +539,7 @@ namespace siades.Database.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProvinceId");
+                    b.HasIndex("GetProvinceId");
 
                     b.ToTable("Tb_TownShiep");
                 });
@@ -552,30 +548,24 @@ namespace siades.Database.Persistence.Migrations
                 {
                     b.HasOne("siades.Models.TownShiep", "GetTownShiep")
                         .WithMany("AddressesList")
-                        .HasForeignKey("TownShiepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetTownShiepId");
 
                     b.Navigation("GetTownShiep");
                 });
 
             modelBuilder.Entity("siades.Models.BloodRequest", b =>
                 {
-                    b.HasOne("siades.Models.Donor", "GetDonor")
-                        .WithMany()
-                        .HasForeignKey("DonorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("siades.Models.Blood", "GetBlood")
                         .WithMany("ListRequest")
                         .HasForeignKey("GetBloodId");
 
+                    b.HasOne("siades.Models.Donor", "GetDonor")
+                        .WithMany()
+                        .HasForeignKey("GetDonorId");
+
                     b.HasOne("siades.Models.Hospital", "GetHospital")
                         .WithMany("ListRequest")
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetHospitalId");
 
                     b.Navigation("GetBlood");
 
@@ -588,9 +578,7 @@ namespace siades.Database.Persistence.Migrations
                 {
                     b.HasOne("siades.Models.Person", "GetPerson")
                         .WithMany("DoctorsList")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetPersonId");
 
                     b.Navigation("GetPerson");
                 });
@@ -603,24 +591,14 @@ namespace siades.Database.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("siades.Models.StockHold", "GetStock")
-                        .WithMany()
-                        .HasForeignKey("StockHoldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("GetDonor");
-
-                    b.Navigation("GetStock");
                 });
 
             modelBuilder.Entity("siades.Models.Donor", b =>
                 {
                     b.HasOne("siades.Models.Person", "GetPerson")
                         .WithMany("DonorsList")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetPersonId");
 
                     b.Navigation("GetPerson");
                 });
@@ -628,33 +606,25 @@ namespace siades.Database.Persistence.Migrations
             modelBuilder.Entity("siades.Models.Hospital", b =>
                 {
                     b.HasOne("siades.Models.Address", "GetAddress")
-                        .WithOne("GetHospital")
-                        .HasForeignKey("siades.Models.Hospital", "AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("GetAddressId");
 
                     b.Navigation("GetAddress");
                 });
 
             modelBuilder.Entity("siades.Models.Person", b =>
                 {
+                    b.HasOne("siades.Models.Contact", "GetContact")
+                        .WithOne("GetPerson")
+                        .HasForeignKey("siades.Models.Person", "ContactId");
+
                     b.HasOne("siades.Models.Address", "GetAddress")
                         .WithMany("People")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetAddressId");
 
                     b.HasOne("siades.Models.Blood", "GetBlood")
                         .WithMany("People")
-                        .HasForeignKey("BloodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("siades.Models.Contact", "GetContact")
-                        .WithOne("GetPerson")
-                        .HasForeignKey("siades.Models.Person", "ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetBloodId");
 
                     b.Navigation("GetAddress");
 
@@ -667,77 +637,37 @@ namespace siades.Database.Persistence.Migrations
                 {
                     b.HasOne("siades.Models.Country", "GetCountry")
                         .WithMany("ProvinceList")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetCountryId");
 
                     b.Navigation("GetCountry");
-                });
-
-            modelBuilder.Entity("siades.Models.RelHospService", b =>
-                {
-                    b.HasOne("siades.Models.Hospital", "GetHospital")
-                        .WithMany("Services")
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("siades.Models.HospitalService", "GetService")
-                        .WithMany("Hospitals")
-                        .HasForeignKey("HospitalServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GetHospital");
-
-                    b.Navigation("GetService");
                 });
 
             modelBuilder.Entity("siades.Models.SpecialityDoctor", b =>
                 {
                     b.HasOne("siades.Models.Doctor", "GetDoctor")
                         .WithMany("Specialities")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetDoctorId");
 
                     b.HasOne("siades.Models.Speciality", "GetSpeciality")
                         .WithMany("Doctors")
-                        .HasForeignKey("SpecialityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetSpecialityId");
 
                     b.Navigation("GetDoctor");
 
                     b.Navigation("GetSpeciality");
                 });
 
-            modelBuilder.Entity("siades.Models.StockHold", b =>
-                {
-                    b.HasOne("siades.Models.Blood", "GetBlood")
-                        .WithMany()
-                        .HasForeignKey("BloodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GetBlood");
-                });
-
             modelBuilder.Entity("siades.Models.TownShiep", b =>
                 {
                     b.HasOne("siades.Models.Province", "GetProvince")
                         .WithMany("TownShiepsList")
-                        .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GetProvinceId");
 
                     b.Navigation("GetProvince");
                 });
 
             modelBuilder.Entity("siades.Models.Address", b =>
                 {
-                    b.Navigation("GetHospital");
-
                     b.Navigation("People");
                 });
 
@@ -771,13 +701,6 @@ namespace siades.Database.Persistence.Migrations
             modelBuilder.Entity("siades.Models.Hospital", b =>
                 {
                     b.Navigation("ListRequest");
-
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("siades.Models.HospitalService", b =>
-                {
-                    b.Navigation("Hospitals");
                 });
 
             modelBuilder.Entity("siades.Models.Person", b =>

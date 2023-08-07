@@ -10,9 +10,9 @@ namespace siades.Services.Interfaces
     public interface ICountryRepository
     {
         Task <IEnumerable<Country>> GetValues();
-        Task<Country> GetValue(Guid id);
+        Task<Country> GetValue(int id);
         Task NewCountry(CountryDTO entity);
-        Task<Country> Update(CountryDTO entity, Guid Id);
-        Task Delete(Guid id);
+        Task<Country> Update(CountryDTO entity, int Id);
+        Task Delete(int id);
     }
 }

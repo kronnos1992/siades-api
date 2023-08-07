@@ -6,9 +6,9 @@ namespace siades.Services.Interfaces
     public interface ISpecialityRepository
     {
         Task<IEnumerable<Speciality>> GetValues();
-        Task<Speciality> GetValue(Guid id);
+        Task<Speciality> GetValue(int id);
         Task NewSpeciality(SpecialityDTO entity);
-        Task<Speciality> Update(SpecialityDTO entity, Guid Id);
-        Task Delete(Guid id);
+        Task<Speciality> Update(SpecialityDTO entity, int Id);
+        Task Delete(int id);
     }
 }

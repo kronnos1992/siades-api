@@ -152,6 +152,17 @@ namespace storm.api.Services
             });
             return _services;
         }
+        // var donor = await dbContext.Tb_Donor
+        //     .SingleOrDefaultAsync(x => x.Id == donorId);
 
+        // if (donor.ToString().Trim().Length > 0)
+        //{
+        //     donor.LastGivenDate = DateTime.Now;
+        //     donor.NextGivenDate = DateTime.Now.AddDays(-90);
+        //     donor.RemaingDays = DateTime.Now.Day - donor.NextGivenDate.Day;
+        //     dbContext.Update(donor);
+        //     await dbContext.SaveChangesAsync();
+        //     dbContext.Dispose();
+        // }
     }
 }

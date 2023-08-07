@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.DefaultIfEmpty();
+        //options.JsonSerializerOptions.Converters.DefaultIfEmpty();
         options.JsonSerializerOptions.AllowTrailingCommas = true;
         options.JsonSerializerOptions.DefaultBufferSize = 1024;
         options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
@@ -33,9 +33,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDataProtection().UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
 {
-        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
-        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
-    });
+    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+});
 
 builder.Services.Configure<FormOptions>(o =>
     {
@@ -50,14 +50,18 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<SiadesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
 );
-builder.Services.AddTransient<IBloodRepository, BloodRepository>();
-builder.Services.AddTransient<ICountryRepository, CountryRepository>();
-builder.Services.AddTransient<IProvinceRepository, ProvinceRepository>();
-builder.Services.AddTransient<ITownshiepRepository, TownShiepRepository>();
-builder.Services.AddTransient<ISpecialityRepository, SpecialityRepository>();
-builder.Services.AddTransient<IHospitalRepository, HospitalRepository>();
-builder.Services.AddScoped<IDoctoRepository, DoctoRepository>();
-builder.Services.AddScoped<IDonoRepository, DonoRepository>();
+builder.Services.AddTransient<IBloodRepository, BloodRepository>().AddLogging();
+builder.Services.AddTransient<ICountryRepository, CountryRepository>().AddLogging();
+builder.Services.AddTransient<IProvinceRepository, ProvinceRepository>().AddLogging();
+builder.Services.AddTransient<ITownshiepRepository, TownShiepRepository>().AddLogging();
+builder.Services.AddTransient<ISpecialityRepository, SpecialityRepository>().AddLogging();
+builder.Services.AddTransient<IHospitalRepository, HospitalRepository>().AddLogging();
+
+builder.Services.AddTransient<IDoctoRepository, DoctoRepository>();
+builder.Services.AddTransient<IDonoRepository, DonoRepository>();
+builder.Services.AddTransient<IDonationRepository, DonationRepository>();
+
+builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 var app = builder.Build();
 
 
@@ -68,12 +72,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(options =>{
+app.UseCors(options =>
+{
     options
         .AllowAnyOrigin()
         .AllowAnyHeader()
         .AllowAnyMethod();
-        
+
 });
 
 app.UseHttpsRedirection();

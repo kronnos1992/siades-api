@@ -26,8 +26,8 @@ namespace siades.Controllers
     [Produces("application/json")]
     [ProducesResponseType(400)]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> AddNewProvince([FromBody] ProvinceDTO entity, Guid countryId)
-    {
+        public async Task<IActionResult> AddNewProvince([FromBody] ProvinceDTO entity, int countryId)
+        {
         try
         {
             await repository.NewProvince(entity, countryId);
@@ -57,8 +57,8 @@ namespace siades.Controllers
     [Route("getone")]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> GetAsync(Guid id)
-    {
+        public async Task<IActionResult> GetAsync(int id)
+        {
         try
         {
             var Province = await repository.GetValue(id);
@@ -77,8 +77,8 @@ namespace siades.Controllers
     [HttpPut]
     [ProducesResponseType(404)]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> Update([FromBody] ProvinceDTO entity, Guid id)
-    {
+        public async Task<IActionResult> Update([FromBody] ProvinceDTO entity, int id)
+        {
         try
         {
             await repository.Update(entity, id);
@@ -93,8 +93,8 @@ namespace siades.Controllers
     [HttpDelete]
     [ProducesResponseType(404)]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> Delete( Guid id)
-    {
+        public async Task<IActionResult> Delete(int id)
+        {
         try
         {
             await repository.Delete(id);

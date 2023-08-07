@@ -8,13 +8,9 @@ namespace siades.Services.DTOs.DonorDTO
     public class DonorDTO
     {
         //donor
-        public int RemaingDays { get; set; }
+
         public string? DonorType { get; set; }
-        public string? FirstGivenDate { get; set; }
-        public DateTime LastGivenDate { get; set; }
-        public DateTime NextGivenDate { get; set; }
         public bool IsElegilbe { get; set; }
-        public string? RefNumber { get; set; }
 
         // Person
         public string? FullName { get; set; }

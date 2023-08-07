@@ -10,7 +10,7 @@ namespace siades.Database.Configurations
         {
             builder
                 .HasKey(p => p.Id);
-            
+
             builder
                 .Property(p => p.DocNumber)
                 .IsRequired()
@@ -18,17 +18,22 @@ namespace siades.Database.Configurations
                 .Metadata.IsUniqueIndex();
 
             builder
-                . Property(p => p.PersonId)
-                .Metadata.IsForeignKey();
+                .Property(p => p.BloodGroupName)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder
+                .HasIndex(p => p.BloodGroupName)
+                .IsUnique();
 
             builder
                 .HasMany(x => x.Specialities)
                 .WithOne(x => x.GetDoctor);
-            
+
             builder
                 .HasOne(x => x.GetPerson)
                 .WithMany(x => x.DoctorsList);
- 
+
         }
     }
 }

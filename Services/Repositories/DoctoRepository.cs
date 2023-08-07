@@ -14,7 +14,7 @@ namespace siades.Services.Repositories
         {
             this.dbcontext = dbcontext;
         }
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<Doctor> GetValue(Guid id)
+        public async Task<Doctor> GetValue(int id)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task LinkDocSpeciality(Guid doctor, Guid speciality)
+        public async Task LinkDocSpeciality(int doctor, int speciality)
         {
             try
             {
@@ -70,7 +70,6 @@ namespace siades.Services.Repositories
 
                 var newData = new SpecialityDoctor
                 {
-                    Id = Guid.NewGuid(),
                     CreatedAt = DateTime.Now,
                     GetDoctor = getDoctor,
                     GetSpeciality = getSpeciality
@@ -86,49 +85,46 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task NewDoctor(DoctorDTO entity, Guid townId, Guid bloodId)
+        public async Task NewDoctor(DoctorDTO entity, int bloodId, int townId)
         {
             try
             {
-                var townShiep = dbcontext.Tb_TownShiep.SingleOrDefault(x => x.Id == townId);
                 var blood = dbcontext.Tb_Blood.SingleOrDefault(x => x.Id == bloodId);
+                var townShiep = dbcontext.Tb_TownShiep.SingleOrDefault(x => x.Id == townId);
+
 
                 var newDoctor = new Doctor
                 {
                     // doctor
-                    Id = Guid.NewGuid(),
                     CreatedAt = DateTime.Now,
                     DocNumber = entity.DoctorNumber,
+                    BloodGroupName = blood.BloodGroupName,
 
                     //Person
                     GetPerson = new Person
                     {
-                        Id = Guid.NewGuid(),
+
                         CreatedAt = DateTime.Now,
                         //person
                         FullName = entity.FullName,
                         IdentDocNumber = entity.IdNumber,
                         TypeIdentNumber = entity.TypeDocId,
-
-                        GetContact = new Contact
-                        {
-                            Id = Guid.NewGuid(),
-                            CreatedAt = DateTime.Now,
-                            // contact
-                            PhoneNumeber = entity.PhoneNumber,
-                            HousePhoneNumber = entity.HouseNumber,
-                            EmailAdrress = entity.EmailAdrress,
-                        },
-
                         GetAddress = new Address
                         {
-                            Id = Guid.NewGuid(),
+
                             CreatedAt = DateTime.Now,
-                            //address
                             Street = entity.Street,
                             HouseNumber = entity.HouseNumber,
                             NeighborHud = entity.NeighborHud,
                             GetTownShiep = townShiep
+                        },
+                        GetContact = new Contact
+                        {
+
+                            CreatedAt = DateTime.Now,
+                            PhoneNumeber = entity.PhoneNumber,
+                            HousePhoneNumber = entity.HouseNumber,
+                            EmailAdrress = entity.EmailAdrress,
                         },
                         GetBlood = blood
                     },
@@ -145,7 +141,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<Doctor> Update(DoctorDTO entity, Guid Id)
+        public async Task<Doctor> Update(DoctorDTO entity, int Id)
         {
             try
             {

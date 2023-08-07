@@ -21,16 +21,8 @@ namespace siades.Database.Configurations
                 .Property(p => p.DonorType)
                 .IsRequired()
                 .HasMaxLength(50);
-            
+
             builder
-                .Property(p => p.FirstGivenDate)
-                .IsRequired();
-            
-            builder
-                .Property(x => x.PersonId)
-                .Metadata.IsForeignKey();
-            
-            builder 
                 .HasOne(x => x.GetPerson)
                 .WithMany(x => x.DonorsList);
 

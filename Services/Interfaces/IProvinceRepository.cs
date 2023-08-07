@@ -10,9 +10,9 @@ namespace siades.Services.Interfaces
     public interface IProvinceRepository
     {
         Task <IEnumerable<Province>> GetValues();
-        Task <Province> GetValue(Guid id);
-        Task NewProvince(ProvinceDTO entity, Guid countryId);
-        Task <Province> Update(ProvinceDTO entity, Guid Id);
-        Task Delete(Guid id);
+        Task<Province> GetValue(int id);
+        Task NewProvince(ProvinceDTO entity, int countryId);
+        Task<Province> Update(ProvinceDTO entity, int Id);
+        Task Delete(int id);
     }
 }

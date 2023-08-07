@@ -31,7 +31,7 @@ namespace siades.Services.Repositories
                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-        public async Task<Country> GetValue(Guid id)
+        public async Task<Country> GetValue(int id)
         {
             try
             {
@@ -51,9 +51,9 @@ namespace siades.Services.Repositories
         {
             try
             {
-                
-                var newAdd = new Country{
-                    Id = Guid.NewGuid(),
+
+                var newAdd = new Country
+                {
                     PhoneCode = entity.PhoneCode.ToUpper(),
                     CountryName = entity.CountryName.ToUpper(),
                     CreatedAt = DateTime.Now
@@ -68,7 +68,7 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nº BR001: {ex.Message}");
             }
         }
-        public async Task<Country> Update(CountryDTO entity, Guid Id)
+        public async Task<Country> Update(CountryDTO entity, int Id)
         {
              try
             {
@@ -93,7 +93,7 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nºBR001: {ex.Message} "); 
             }
         }
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             try
             {

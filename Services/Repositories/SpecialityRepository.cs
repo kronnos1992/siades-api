@@ -14,7 +14,7 @@ namespace siades.Services.Repositories
         {
             this.dbcontext = dbcontext;
         }
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<Speciality> GetValue(Guid id)
+        public async Task<Speciality> GetValue(int id)
         {
             try
             {
@@ -67,7 +67,6 @@ namespace siades.Services.Repositories
 
                 var newAdd = new Speciality
                 {
-                    Id = Guid.NewGuid(),
                     SpecialityName = entity.Name.ToUpper(),
                     CreatedAt = DateTime.UtcNow,
                 };
@@ -82,7 +81,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<Speciality> Update(SpecialityDTO entity, Guid Id)
+        public async Task<Speciality> Update(SpecialityDTO entity, int Id)
         {
             try
             {

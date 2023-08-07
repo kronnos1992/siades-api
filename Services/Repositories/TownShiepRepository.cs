@@ -31,7 +31,7 @@ namespace siades.Services.Repositories
                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-        public async Task<TownShiep> GetValue(Guid id)
+        public async Task<TownShiep> GetValue(int id)
         {
             try
             {
@@ -47,14 +47,14 @@ namespace siades.Services.Repositories
                throw new Exception($"Erro nºBR001: {ex.Message} "); 
             }
         }
-        public async Task NewTownShiep(TownShiepDTO entity, Guid provinceId)
+        public async Task NewTownShiep(TownShiepDTO entity, int provinceId)
         {
             var province = await dbcontext.Tb_Province.FindAsync(provinceId);
             try
             {
-                
-                var newAdd = new TownShiep{
-                    Id = Guid.NewGuid(),
+
+                var newAdd = new TownShiep
+                {
                     TownName = entity.Name.ToUpper(),
                     CreatedAt = DateTime.Now,
                     GetProvince = province
@@ -69,7 +69,7 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nº BR001: {ex.Message}");
             }
         }
-        public async Task<TownShiep> Update(TownShiepDTO entity, Guid Id)
+        public async Task<TownShiep> Update(TownShiepDTO entity, int Id)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nºBR001: {ex.Message} "); 
             }
         }
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             try
             {

@@ -10,7 +10,7 @@ namespace siades.Services.Repositories
     {
         private readonly SiadesDbContext dbcontext;
 
-        public BloodRepository(SiadesDbContext dbcontext) 
+        public BloodRepository(SiadesDbContext dbcontext)
         {
             this.dbcontext = dbcontext;
         }
@@ -19,17 +19,20 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var findInStock = dbcontext.Tb_StockHold
-                    .Where(p => p.GetBlood.BloodGroupName.Contains(entity.Name));
-                
-                
-                var newAdd = new Blood{
-                    Id = Guid.NewGuid(),
+
+                var newAdd = new Blood
+                {
                     BloodGroupName = entity.Name.ToUpper(),
                     CreatedAt = DateTime.UtcNow,
                 };
-                
-                await dbcontext.AddRangeAsync(newAdd);
+                var newBloodInStock = new StockHold
+                {
+                    StockHoldId = entity.Name.ToUpper(),
+                    CreatedAt = DateTime.UtcNow,
+                    Qty = 0,
+                };
+
+                await dbcontext.AddRangeAsync(newAdd, newBloodInStock);
                 await dbcontext.SaveChangesAsync();
                 dbcontext.Dispose();
             }
@@ -39,23 +42,23 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
-            
+
             try
             {
-                var blood =await dbcontext.Tb_Blood.FindAsync(id);
+                var blood = await dbcontext.Tb_Blood.FindAsync(id);
                 dbcontext.RemoveRange(blood);
                 await dbcontext.SaveChangesAsync();
-                
+
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR002: {ex.Message} "); 
+                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
 
-        public async Task<Blood> GetValue(Guid id)
+        public async Task<Blood> GetValue(int id)
         {
             try
             {
@@ -68,7 +71,7 @@ namespace siades.Services.Repositories
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR001: {ex.Message} "); 
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
 
@@ -82,15 +85,15 @@ namespace siades.Services.Repositories
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR002: {ex.Message} ");
+                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
 
-        public async Task<Blood> Update(BloodDTo entity, Guid Id)
+        public async Task<Blood> Update(BloodDTo entity, int Id)
         {
             try
             {
-                var blood =await dbcontext.Tb_Blood.FindAsync(Id);
+                var blood = await dbcontext.Tb_Blood.FindAsync(Id);
                 if (blood != null || blood.Id != Id)
                 {
                     blood.BloodGroupName = entity.Name.ToUpper();
@@ -100,16 +103,17 @@ namespace siades.Services.Repositories
                     await dbcontext.DisposeAsync();
                     return blood;
                 }
-                else{
+                else
+                {
                     throw new NullReferenceException("Dado não encontrado. ");
                 }
-                
+
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro nºBR001: {ex.Message} "); 
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
-    
+
     }
 }

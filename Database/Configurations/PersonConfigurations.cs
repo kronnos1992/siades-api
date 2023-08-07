@@ -26,19 +26,7 @@ namespace siades.Database.Configurations
                 .Property(p => p.TypeIdentNumber)
                 .IsRequired()
                 .HasMaxLength(50);
-            
-            builder
-                .Property(p => p.AddressId)
-                .Metadata.IsForeignKey();
 
-            builder
-                .Property(p => p.BloodId)
-                .Metadata.IsForeignKey();
-            
-            builder
-                .Property(p => p.ContactId)
-                .Metadata.IsForeignKey();
-            
             builder
                 .HasOne(x => x.GetAddress)
                 .WithMany(x => x.People);

@@ -19,9 +19,6 @@ namespace siades.Database.Configurations
                 .IsRequired()
                 .HasMaxLength(16);
 
-            builder.Property(p => p.PersonId)
-                .Metadata.IsForeignKey();
-
             builder
                 .HasOne(p => p.GetPerson)
                 .WithOne(p => p.GetContact);  

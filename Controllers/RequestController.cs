@@ -11,13 +11,12 @@ namespace siades.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TownShiepController : ControllerBase
+    public class RequestController : ControllerBase
     {
+        private readonly ILogger<RequestController> _logger;
+        private readonly IRequestRepository repository;
 
-        private readonly ILogger<TownShiepController> _logger;
-        private readonly ITownshiepRepository repository;
-
-        public TownShiepController(ILogger<TownShiepController> logger, ITownshiepRepository repository)
+        public RequestController(ILogger<RequestController> logger, IRequestRepository repository)
         {
             _logger = logger;
             this.repository = repository;
@@ -27,12 +26,12 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewTownShiep([FromBody] TownShiepDTO entity, int provinceId)
+        public async Task<IActionResult> AddNewRequest([FromBody] RequestDTO entity, int bloodId, int hospitalId, int donorId)
         {
             try
             {
-                await repository.NewTownShiep(entity, provinceId);
-                return Ok();
+                await repository.CreateRequest(entity, donorId, hospitalId, bloodId);
+                return Created("", $"{entity}");
             }
             catch (Exception ex)
             {
@@ -44,16 +43,16 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<TownShiep>> GetAllAsync()
+        public ActionResult<IEnumerable<BloodRequest>> GetAllAsync()
         {
-            var TownShiep = repository.GetValues();
-            if (TownShiep == null)
+            var blood = repository.ShowRequests();
+            if (blood == null)
             {
                 return NotFound();
             }
-            return Ok(TownShiep);
+            return Ok(blood);
         }
-    
+
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
@@ -62,12 +61,12 @@ namespace siades.Controllers
         {
             try
             {
-                var TownShiep = await repository.GetValue(id);
-                if (TownShiep == null)
+                var blood = await repository.ShowRequest(id);
+                if (blood == null)
                 {
                     return NotFound();
                 }
-                return Ok(TownShiep);
+                return Ok(blood);
             }
             catch (Exception ex)
             {
@@ -78,11 +77,11 @@ namespace siades.Controllers
         [HttpPut]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Update([FromBody] TownShiepDTO entity, int id)
+        public async Task<IActionResult> Update([FromBody] RequestDTO entity, int id)
         {
             try
             {
-                await repository.Update(entity, id);
+                await repository.UpdateRequest(entity, id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -98,7 +97,7 @@ namespace siades.Controllers
         {
             try
             {
-                await repository.Delete(id);
+                await repository.DeleteRequest(id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -107,5 +106,14 @@ namespace siades.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("aprove")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(201)]
+        public async Task<IActionResult> AproveRequest(int id)
+        {
+            await repository.AproveRequest(id);
+            return NoContent();
+        }
     }
 }

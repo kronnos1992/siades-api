@@ -28,7 +28,7 @@ public class BloodController : ControllerBase
         try
         {
             await repository.NewBlood(entity);
-            return Ok();
+            return Ok($"Grupo: {entity.Name}");
         }
         catch (Exception ex)
         {
@@ -54,7 +54,7 @@ public class BloodController : ControllerBase
     [Route("getone")]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> GetAsync(Guid id)
+    public async Task<IActionResult> GetAsync(int id)
     {
         try
         {
@@ -74,12 +74,12 @@ public class BloodController : ControllerBase
     [HttpPut]
     [ProducesResponseType(404)]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> Update([FromBody] BloodDTo entity, Guid id)
+    public async Task<IActionResult> Update([FromBody] BloodDTo entity, int id)
     {
         try
         {
             await repository.Update(entity, id);
-            return NoContent();
+            return Ok($"Grupo: {entity.Name}");
         }
         catch (Exception ex)
         {
@@ -90,7 +90,7 @@ public class BloodController : ControllerBase
     [HttpDelete]
     [ProducesResponseType(404)]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> Delete( Guid id)
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {

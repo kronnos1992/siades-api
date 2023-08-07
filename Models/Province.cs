@@ -10,10 +10,7 @@ namespace siades.Models
         }
         public string? ProvinceName { get; set; }
         public string? GeoLocation { get; set; }
-        
-        // Foreign key of country
-        public Guid CountryId { get; set; }
-        //relacionamento pais e provincia
+
         public Country? GetCountry { get; set; }
 
         //relacionamento pais e provincia

@@ -17,10 +17,6 @@ namespace siades.Database.Configurations
                 .HasMaxLength(50);
 
             builder
-                .Property(p => p.ProvinceId)
-                .Metadata.IsForeignKey();
-
-            builder
                 .HasMany(x => x.AddressesList)
                 .WithOne(x => x.GetTownShiep);
 

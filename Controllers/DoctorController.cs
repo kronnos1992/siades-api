@@ -26,11 +26,11 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewDoctor([FromBody] DoctorDTO entity, Guid townId, Guid bloodId)
+        public async Task<IActionResult> AddNewDoctor([FromBody] DoctorDTO entity, int bloodId, int townId)
         {
             try
             {
-                await repository.NewDoctor(entity, townId, bloodId);
+                await repository.NewDoctor(entity, bloodId, townId);
                 return Ok();
             }
             catch (Exception ex)
@@ -44,11 +44,12 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> AddNewDoctorSpeciality(Guid doctorId, Guid specialityId)
+        public async Task<IActionResult> AddNewDoctorSpeciality(int doctorId, int specialityId)
         {
             try
             {
                 var data = repository.LinkDocSpeciality(doctorId, specialityId);
+                await Task.CompletedTask;
                 return Ok(data);
             }
             catch (Exception ex)
@@ -76,7 +77,7 @@ namespace siades.Controllers
         [Route("getone")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetAsync(Guid id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
@@ -96,7 +97,7 @@ namespace siades.Controllers
         [HttpPut]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Update([FromBody] DoctorDTO entity, Guid id)
+        public async Task<IActionResult> Update([FromBody] DoctorDTO entity, int id)
         {
             try
             {
@@ -112,7 +113,7 @@ namespace siades.Controllers
         [HttpDelete]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {

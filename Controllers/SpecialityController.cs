@@ -53,7 +53,7 @@ namespace siades.Controllers
         [Route("getone")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetAsync(Guid id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace siades.Controllers
         [HttpPut]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Update([FromBody] SpecialityDTO entity, Guid id)
+        public async Task<IActionResult> Update([FromBody] SpecialityDTO entity, int id)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace siades.Controllers
         [HttpDelete]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {

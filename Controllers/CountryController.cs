@@ -30,7 +30,7 @@ namespace siades.Controllers
             try
             {
                 await repository.NewCountry(entity);
-                return Ok();
+                return Ok($"{entity.CountryName}, Adicionado com sucesso");
             }
             catch (Exception ex)
             {
@@ -56,7 +56,7 @@ namespace siades.Controllers
         [Route("getone")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetAsync(Guid id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
@@ -76,12 +76,12 @@ namespace siades.Controllers
         [HttpPut]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Update([FromBody] CountryDTO entity, Guid id)
+        public async Task<IActionResult> Update([FromBody] CountryDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return NoContent();
+                return Ok($"{entity.CountryName}, Atualizado com sucesso");
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace siades.Controllers
         [HttpDelete]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Delete( Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {

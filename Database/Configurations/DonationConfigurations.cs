@@ -8,21 +8,19 @@ namespace siades.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<Donation> builder)
         {
-            builder
-                .Property(p => p.DonorId)
-                .Metadata.IsForeignKey();
-            
-            builder
-                .Property(p => p.StockHoldId)
-                .Metadata.IsForeignKey();
-            
+
             builder
                 .HasOne(p => p.GetDonor)
                 .WithMany(p => p.Donations);
-            
+
             builder
-                .HasOne(p => p.GetStock);
- 
+                .Property(p => p.BloodGroup)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder
+                .HasIndex(p => p.BloodGroup)
+                .IsUnique();
         }
     }
 }

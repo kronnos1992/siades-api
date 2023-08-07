@@ -31,7 +31,7 @@ namespace siades.Services.Repositories
                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-        public async Task<Province> GetValue(Guid id)
+        public async Task<Province> GetValue(int id)
         {
             try
             {
@@ -47,14 +47,14 @@ namespace siades.Services.Repositories
                throw new Exception($"Erro nºBR001: {ex.Message} "); 
             }
         }
-        public async Task NewProvince(ProvinceDTO entity, Guid countryId)
+        public async Task NewProvince(ProvinceDTO entity, int countryId)
         {
             var country = dbcontext.Tb_Country.FirstOrDefault(x => x.Id == countryId);
             try
             {
-                
-                var newAdd = new Province{
-                    Id = Guid.NewGuid(),
+
+                var newAdd = new Province
+                {
                     ProvinceName = entity.ProvinceName.ToUpper(),
                     GeoLocation = entity.GeoLocation.ToUpper(),
                     CreatedAt = DateTime.Now,
@@ -70,7 +70,7 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nº BR001: {ex.Message}");
             }
         }
-        public async Task<Province> Update(ProvinceDTO entity, Guid Id)
+        public async Task<Province> Update(ProvinceDTO entity, int Id)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nºBR001: {ex.Message} "); 
             }
         }
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             try
             {

@@ -4,19 +4,16 @@ using siades.Models;
 
 namespace siades.Database.Configurations
 {
-    public class StockHoldConfigurations: IEntityTypeConfiguration<StockHold>
+    public class StockHoldConfigurations : IEntityTypeConfiguration<StockHold>
     {
         public void Configure(EntityTypeBuilder<StockHold> builder)
         {
             builder
-                .HasKey(p => p.Id);
+                .HasKey(p => p.StockHoldId);
 
             builder
-                .Property(p => p.BloodId)
-                .Metadata.IsForeignKey();
-
-            builder 
-                .HasOne(p => p.GetBlood);
+                .HasIndex(p => p.StockHoldId)
+                .IsUnique();
         }
     }
 }

@@ -2,11 +2,13 @@ using siades.Default;
 
 namespace siades.Models
 {
-    public class StockHold : EntityDefault
+    public class StockHold
     {
-        public int Qty { get; set; }
-        public Guid BloodId { get; set; }
-        public Blood? GetBlood { get; set; }
-        
+        public string StockHoldId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        //public string? BloodGroup { get; set; }
+        public int Qty { get; set; } = 0;
+
     }
 }

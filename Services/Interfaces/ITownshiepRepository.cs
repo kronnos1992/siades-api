@@ -10,9 +10,9 @@ namespace siades.Services.Interfaces
     public interface ITownshiepRepository
     {
         Task <IEnumerable<TownShiep>> GetValues();
-        Task <TownShiep> GetValue(Guid id);
-        Task NewTownShiep(TownShiepDTO entity, Guid countryId);
-        Task <TownShiep> Update(TownShiepDTO entity, Guid Id);
-        Task Delete(Guid id);
+        Task<TownShiep> GetValue(int id);
+        Task NewTownShiep(TownShiepDTO entity, int countryId);
+        Task<TownShiep> Update(TownShiepDTO entity, int Id);
+        Task Delete(int id);
     }
 }

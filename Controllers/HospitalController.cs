@@ -26,7 +26,7 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewBlood([FromBody] HospitalDTO entity, Guid townId)
+        public async Task<IActionResult> AddNewBlood([FromBody] HospitalDTO entity, int townId)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace siades.Controllers
         [Route("getone")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetAsync(Guid id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace siades.Controllers
         [HttpPut]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Update([FromBody] HospitalDTO entity, Guid id)
+        public async Task<IActionResult> Update([FromBody] HospitalDTO entity, int id)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace siades.Controllers
         [HttpDelete]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {

@@ -19,7 +19,7 @@ namespace siades.Services.Repositories
             this.dbcontext = dbcontext;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<Hospital> GetValue(Guid id)
+        public async Task<Hospital> GetValue(int id)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task NewHospital(HospitalDTO entity, Guid townId)
+        public async Task NewHospital(HospitalDTO entity, int townId)
         {
             var town = dbcontext.Tb_TownShiep
                 .FirstOrDefault(h => h.Id == townId);
@@ -81,7 +81,6 @@ namespace siades.Services.Repositories
             {
                 var hospital = new Hospital
                 {
-                    Id = Guid.NewGuid(),
                     HospitalName = entity.HospitalName,
                     CreatedAt = DateTime.Now,
                     GetAddress = new Address
@@ -103,7 +102,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<Hospital> Update(HospitalDTO entity, Guid hospitalId)
+        public async Task<Hospital> Update(HospitalDTO entity, int hospitalId)
         {
             try
             {
