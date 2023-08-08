@@ -13,98 +13,98 @@ namespace siades.Controllers
     [Route("api/[controller]")]
     public class ProvinceController : ControllerBase
     {
-    private readonly ILogger<ProvinceController> _logger;
-    private readonly IProvinceRepository repository;
+        private readonly ILogger<ProvinceController> _logger;
+        private readonly IProvinceRepository repository;
 
-    public ProvinceController(ILogger<ProvinceController> logger, IProvinceRepository repository)
-    {
-        _logger = logger;
-        this.repository = repository;
-    }
+        public ProvinceController(ILogger<ProvinceController> logger, IProvinceRepository repository)
+        {
+            _logger = logger;
+            this.repository = repository;
+        }
 
-    [HttpPost]
-    [Produces("application/json")]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewProvince([FromBody] ProvinceDTO entity, int countryId)
+        [HttpPost]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> AddProvince([FromBody] ProvinceDTO entity, int countryId)
         {
-        try
-        {
-            await repository.NewProvince(entity, countryId);
-            return Ok();
+            try
+            {
+                await repository.NewProvince(entity, countryId);
+                return Ok($"Registro adicionado, {entity.ProvinceName}");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
-    [HttpGet]
-    [Produces("application/json")]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(200)]
-    public ActionResult<IEnumerable<Province>> GetAllAsync()
-    {
-        var Province = repository.GetValues();
-        if (Province == null)
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> GetAllAsync()
         {
-            return NotFound();
-        }
-        return Ok(Province);
-    }
-    
-    [HttpGet]
-    [Route("getone")]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(200)]
-        public async Task<IActionResult> GetAsync(int id)
-        {
-        try
-        {
-            var Province = await repository.GetValue(id);
-            if (Province == null)
+            var provinces = await repository.GetValues();
+            if (provinces == null)
             {
                 return NotFound();
             }
-            return Ok(Province);
+            return Ok(provinces);
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
-    [HttpPut]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(201)]
+        [HttpGet]
+        [Route("getone")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            try
+            {
+                var Province = await repository.GetValue(id);
+                if (Province == null)
+                {
+                    return NotFound();
+                }
+                return Ok(Province);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(201)]
         public async Task<IActionResult> Update([FromBody] ProvinceDTO entity, int id)
         {
-        try
-        {
-            await repository.Update(entity, id);
-            return NoContent();
+            try
+            {
+                await repository.Update(entity, id);
+                return Created("", entity.ProvinceName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
-    [HttpDelete]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(201)]
+        [HttpDelete]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(201)]
         public async Task<IActionResult> Delete(int id)
         {
-        try
-        {
-            await repository.Delete(id);
-            return NoContent();
+            try
+            {
+                await repository.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
     }
 }

@@ -26,12 +26,12 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewDoctor([FromBody] DoctorDTO entity, int bloodId, int townId)
+        public async Task<IActionResult> AddDoctor([FromBody] DoctorDTO entity, int bloodId, int townId)
         {
             try
             {
                 await repository.NewDoctor(entity, bloodId, townId);
-                return Ok();
+                return Created("", entity);
             }
             catch (Exception ex)
             {
@@ -43,14 +43,13 @@ namespace siades.Controllers
         [Route("add-speciality")]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
-        public async Task<IActionResult> AddNewDoctorSpeciality(int doctorId, int specialityId)
+        [ProducesResponseType(201)]
+        public async Task<IActionResult> NewDoctorSpeciality(int doctorId, int specialityId)
         {
             try
             {
-                var data = repository.LinkDocSpeciality(doctorId, specialityId);
-                await Task.CompletedTask;
-                return Ok(data);
+                await repository.LinkDocSpeciality(doctorId, specialityId);
+                return Created("", "Registro adicionado");
             }
             catch (Exception ex)
             {
@@ -63,9 +62,9 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<Doctor>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var doctor = repository.GetValues();
+            var doctor = await repository.GetValues();
             if (doctor == null)
             {
                 return NotFound();

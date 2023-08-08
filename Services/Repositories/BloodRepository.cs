@@ -17,47 +17,54 @@ namespace siades.Services.Repositories
 
         public async Task NewBlood(BloodDTo entity)
         {
+            var blood = await dbcontext.Tb_Blood.SingleOrDefaultAsync(x => x.BloodGroupName == entity.Name);
             try
             {
-
-                var newAdd = new Blood
+                if (blood == null)
                 {
-                    BloodGroupName = entity.Name.ToUpper(),
-                    CreatedAt = DateTime.UtcNow,
-                };
-                var newBloodInStock = new StockHold
-                {
-                    StockHoldId = entity.Name.ToUpper(),
-                    CreatedAt = DateTime.UtcNow,
-                    Qty = 0,
-                };
+                    var newAdd = new Blood
+                    {
+                        BloodGroupName = entity.Name.ToUpper(),
+                        CreatedAt = DateTime.UtcNow,
+                    };
+                    var newBloodInStock = new StockHold
+                    {
+                        StockHoldId = entity.Name.ToUpper(),
+                        CreatedAt = DateTime.UtcNow,
+                        Qty = 0,
+                    };
 
-                await dbcontext.AddRangeAsync(newAdd, newBloodInStock);
-                await dbcontext.SaveChangesAsync();
-                dbcontext.Dispose();
+                    await dbcontext.AddRangeAsync(newAdd, newBloodInStock);
+                    await dbcontext.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception("O grupo sanguineo ja existe. ");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception($"Erro nº BR001: {ex.Message}");
             }
         }
-
         public async Task Delete(int id)
         {
 
             try
             {
                 var blood = await dbcontext.Tb_Blood.FindAsync(id);
-                dbcontext.RemoveRange(blood);
-                await dbcontext.SaveChangesAsync();
-
+                if (blood != null)
+                {
+                    dbcontext.RemoveRange(blood);
+                    await dbcontext.SaveChangesAsync();
+                }
+                throw new Exception("Selecione o grupo sanguineo. ");
             }
             catch (Exception ex)
             {
                 throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-
         public async Task<Blood> GetValue(int id)
         {
             try
@@ -74,7 +81,6 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
-
         public async Task<IEnumerable<Blood>> GetValues()
         {
             try
@@ -88,7 +94,6 @@ namespace siades.Services.Repositories
                 throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-
         public async Task<Blood> Update(BloodDTo entity, int Id)
         {
             try

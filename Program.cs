@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 using siades.Database.DataContext;
 using siades.Services.Interfaces;
 using siades.Services.Repositories;
@@ -14,9 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling
+        = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+        .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver
+        = new DefaultContractResolver())
     .AddJsonOptions(options =>
     {
-        //options.JsonSerializerOptions.Converters.DefaultIfEmpty();
         options.JsonSerializerOptions.AllowTrailingCommas = true;
         options.JsonSerializerOptions.DefaultBufferSize = 1024;
         options.JsonSerializerOptions.IgnoreReadOnlyFields = true;

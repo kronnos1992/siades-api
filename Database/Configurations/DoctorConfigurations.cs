@@ -23,10 +23,6 @@ namespace siades.Database.Configurations
                 .HasMaxLength(200);
 
             builder
-                .HasIndex(p => p.BloodGroupName)
-                .IsUnique();
-
-            builder
                 .HasMany(x => x.Specialities)
                 .WithOne(x => x.GetDoctor);
 

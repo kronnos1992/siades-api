@@ -96,6 +96,8 @@ public class DonoRepository : IDonoRepository
                     FullName = entity.FullName.ToUpper(),
                     IdentDocNumber = entity.IdentDocNumber.Trim().ToUpper(),
                     TypeIdentNumber = entity.TypeIdentNumber.ToUpper(),
+                    BirthDate = entity.BirthDate,
+                    Age = DateTime.Now.Year - entity.BirthDate.Year,
 
                     GetAddress = new Address
                     {
@@ -117,6 +119,7 @@ public class DonoRepository : IDonoRepository
                     },
                     GetBlood = blood,
                 }
+
             };
             await dbContext.AddRangeAsync(donor);
             await dbContext.SaveChangesAsync();

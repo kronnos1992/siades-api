@@ -12,9 +12,9 @@ namespace siades.Services.Repositories
 {
     public class ProvinceRepository : IProvinceRepository
     {
-        public SiadesDbContext dbcontext { get; }
+        public readonly SiadesDbContext dbcontext;
 
-        public ProvinceRepository(SiadesDbContext dbcontext) 
+        public ProvinceRepository(SiadesDbContext dbcontext)
         {
             this.dbcontext = dbcontext;
         }
@@ -24,11 +24,10 @@ namespace siades.Services.Repositories
             {
                 var list = await dbcontext.Tb_Province.ToListAsync();
                 return list;
-                //throw new NullReferenceException($"Nenhum valor encontrado");
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR002: {ex.Message} ");
+                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
         public async Task<Province> GetValue(int id)
@@ -44,7 +43,7 @@ namespace siades.Services.Repositories
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR001: {ex.Message} "); 
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
         public async Task NewProvince(ProvinceDTO entity, int countryId)
@@ -60,7 +59,7 @@ namespace siades.Services.Repositories
                     CreatedAt = DateTime.Now,
                     GetCountry = country
                 };
-                
+
                 await dbcontext.AddRangeAsync(newAdd);
                 await dbcontext.SaveChangesAsync();
                 dbcontext.Dispose();
@@ -85,30 +84,31 @@ namespace siades.Services.Repositories
                     await dbcontext.DisposeAsync();
                     return Province;
                 }
-                else{
+                else
+                {
                     throw new NullReferenceException("Dado não encontrado. ");
                 }
-                
+
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro nºBR001: {ex.Message} "); 
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
         public async Task Delete(int id)
         {
             try
             {
-                var Province =await dbcontext.Tb_Province.FindAsync(id);
+                var Province = await dbcontext.Tb_Province.FindAsync(id);
                 dbcontext.RemoveRange(Province);
                 await dbcontext.SaveChangesAsync();
-                
+
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR002: {ex.Message} "); 
+                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-    
+
     }
 }

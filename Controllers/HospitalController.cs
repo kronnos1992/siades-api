@@ -25,13 +25,13 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewBlood([FromBody] HospitalDTO entity, int townId)
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> Insert([FromBody] HospitalDTO entity, int townId)
         {
             try
             {
                 await repository.NewHospital(entity, townId);
-                return Ok(repository);
+                return Ok($"Registro adicionado com sucesso, {entity.HospitalName}");
             }
             catch (Exception ex)
             {
@@ -43,9 +43,9 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<Hospital>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var hospital = repository.GetValues();
+            var hospital = await repository.GetValues();
             if (hospital == null)
             {
                 return NotFound();

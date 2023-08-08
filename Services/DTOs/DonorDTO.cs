@@ -16,6 +16,8 @@ namespace siades.Services.DTOs.DonorDTO
         public string? FullName { get; set; }
         public string? IdentDocNumber { get; set; }
         public string? TypeIdentNumber { get; set; }
+        public DateTime BirthDate { get; set; }
+        //public int Age { get; set; }
 
         // contact
         public string? PhoneNumber { get; set; }

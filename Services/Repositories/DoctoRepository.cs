@@ -18,9 +18,17 @@ namespace siades.Services.Repositories
         {
             try
             {
+                // se doctor for nulo, então retorna vazio
                 var doctor = await dbcontext.Tb_Doctor.FindAsync(id);
-                dbcontext.RemoveRange(doctor);
-                await dbcontext.SaveChangesAsync();
+                if (doctor != null)
+                {
+                    dbcontext.RemoveRange(doctor);
+                    await dbcontext.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new NullReferenceException("Valor não encontrado.");
+                }
 
             }
             catch (Exception ex)
@@ -49,11 +57,13 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var list = await dbcontext.Tb_Doctor
-                    .Include(x => x.Specialities)
-                    .ToListAsync();
-                return list;
-                //throw new NullReferenceException($"Nenhum valor encontrado");
+                var list = await dbcontext.Tb_Doctor.ToListAsync();
+                if (list.Count >= 0)
+                {
+                    return list;
+                }
+
+                throw new NullReferenceException("Nenhum valor encontrado");
             }
             catch (Exception ex)
             {
@@ -65,18 +75,22 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var getDoctor = await dbcontext.Tb_Doctor.FindAsync(doctor);
-                var getSpeciality = await dbcontext.Tb_Speciality.FindAsync(speciality);
+                var getDoctor = await dbcontext.Tb_Doctor.SingleOrDefaultAsync(x => x.Id == doctor);
+                var getSpeciality = await dbcontext.Tb_Speciality.SingleOrDefaultAsync(x => x.Id == speciality);
 
-                var newData = new SpecialityDoctor
+                if (getDoctor != null && getSpeciality != null)
                 {
-                    CreatedAt = DateTime.Now,
-                    GetDoctor = getDoctor,
-                    GetSpeciality = getSpeciality
-                };
+                    var newData = new SpecialityDoctor
+                    {
+                        CreatedAt = DateTime.Now,
+                        DoctorId = getDoctor.Id,
+                        SpecialityId = getSpeciality.Id,
+                    };
 
-                await dbcontext.AddAsync(newData);
-                await dbcontext.SaveChangesAsync();
+                    await dbcontext.AddAsync(newData);
+                    await dbcontext.SaveChangesAsync();
+                }
+                //throw new NullReferenceException("Selecione o médico e a especialidade.");
             }
             catch (Exception ex)
             {
@@ -92,47 +106,49 @@ namespace siades.Services.Repositories
                 var blood = dbcontext.Tb_Blood.SingleOrDefault(x => x.Id == bloodId);
                 var townShiep = dbcontext.Tb_TownShiep.SingleOrDefault(x => x.Id == townId);
 
-
-                var newDoctor = new Doctor
+                if (blood != null && townShiep != null)
                 {
-                    // doctor
-                    CreatedAt = DateTime.Now,
-                    DocNumber = entity.DoctorNumber,
-                    BloodGroupName = blood.BloodGroupName,
-
-                    //Person
-                    GetPerson = new Person
+                    var newDoctor = new Doctor
                     {
-
+                        // doctor
                         CreatedAt = DateTime.Now,
-                        //person
-                        FullName = entity.FullName,
-                        IdentDocNumber = entity.IdNumber,
-                        TypeIdentNumber = entity.TypeDocId,
-                        GetAddress = new Address
+                        DocNumber = entity.DoctorNumber,
+                        BloodGroupName = blood.BloodGroupName,
+                        //Person
+                        GetPerson = new Person
                         {
 
                             CreatedAt = DateTime.Now,
-                            Street = entity.Street,
-                            HouseNumber = entity.HouseNumber,
-                            NeighborHud = entity.NeighborHud,
-                            GetTownShiep = townShiep
+                            //person
+                            FullName = entity.FullName,
+                            IdentDocNumber = entity.IdNumber,
+                            TypeIdentNumber = entity.TypeDocId,
+                            GetAddress = new Address
+                            {
+
+                                CreatedAt = DateTime.Now,
+                                Street = entity.Street,
+                                HouseNumber = entity.HouseNumber,
+                                NeighborHud = entity.NeighborHud,
+                                GetTownShiep = townShiep
+                            },
+                            GetContact = new Contact
+                            {
+
+                                CreatedAt = DateTime.Now,
+                                PhoneNumeber = entity.PhoneNumber,
+                                HousePhoneNumber = entity.HouseNumber,
+                                EmailAdrress = entity.EmailAdrress,
+                            },
+                            GetBlood = blood
                         },
-                        GetContact = new Contact
-                        {
 
-                            CreatedAt = DateTime.Now,
-                            PhoneNumeber = entity.PhoneNumber,
-                            HousePhoneNumber = entity.HouseNumber,
-                            EmailAdrress = entity.EmailAdrress,
-                        },
-                        GetBlood = blood
-                    },
+                    };
 
-                };
-
-                await dbcontext.AddRangeAsync(newDoctor);
-                await dbcontext.SaveChangesAsync();
+                    await dbcontext.AddRangeAsync(newDoctor);
+                    await dbcontext.SaveChangesAsync();
+                }
+                throw new Exception("Informe o grupo sanguineo e o municipio.");
             }
             catch (Exception ex)
             {

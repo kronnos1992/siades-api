@@ -27,12 +27,12 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewTownShiep([FromBody] TownShiepDTO entity, int provinceId)
+        public async Task<IActionResult> AddTownShiep([FromBody] TownShiepDTO entity, int provinceId)
         {
             try
             {
                 await repository.NewTownShiep(entity, provinceId);
-                return Ok();
+                return Created("", entity);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace siades.Controllers
             }
             return Ok(TownShiep);
         }
-    
+
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]

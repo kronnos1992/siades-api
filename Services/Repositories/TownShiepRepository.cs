@@ -12,9 +12,9 @@ namespace siades.Services.Repositories
 {
     public class TownShiepRepository : ITownshiepRepository
     {
-        public SiadesDbContext dbcontext { get; }
+        private readonly SiadesDbContext dbcontext;
 
-        public TownShiepRepository(SiadesDbContext dbcontext) 
+        public TownShiepRepository(SiadesDbContext dbcontext)
         {
             this.dbcontext = dbcontext;
         }
@@ -23,12 +23,15 @@ namespace siades.Services.Repositories
             try
             {
                 var list = await dbcontext.Tb_TownShiep.ToListAsync();
-                return list;
-                //throw new NullReferenceException($"Nenhum valor encontrado");
+                if (list.Count > 0)
+                {
+                    return list;
+                }
+                throw new NullReferenceException($"Nenhum valor encontrado");
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR002: {ex.Message} ");
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
         public async Task<TownShiep> GetValue(int id)
@@ -44,7 +47,7 @@ namespace siades.Services.Repositories
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR001: {ex.Message} "); 
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
         public async Task NewTownShiep(TownShiepDTO entity, int provinceId)
@@ -59,7 +62,7 @@ namespace siades.Services.Repositories
                     CreatedAt = DateTime.Now,
                     GetProvince = province
                 };
-                
+
                 await dbcontext.AddRangeAsync(newAdd);
                 await dbcontext.SaveChangesAsync();
                 dbcontext.Dispose();
@@ -83,30 +86,31 @@ namespace siades.Services.Repositories
                     await dbcontext.DisposeAsync();
                     return townShiep;
                 }
-                else{
+                else
+                {
                     throw new NullReferenceException("Dado não encontrado. ");
                 }
-                
+
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro nºBR001: {ex.Message} "); 
+                throw new Exception($"Erro nºBR001: {ex.Message} ");
             }
         }
         public async Task Delete(int id)
         {
             try
             {
-                var TownShiep =await dbcontext.Tb_TownShiep.FindAsync(id);
+                var TownShiep = await dbcontext.Tb_TownShiep.FindAsync(id);
                 dbcontext.RemoveRange(TownShiep);
                 await dbcontext.SaveChangesAsync();
-                
+
             }
             catch (Exception ex)
             {
-               throw new Exception($"Erro nºBR002: {ex.Message} "); 
+                throw new Exception($"Erro nºBR002: {ex.Message} ");
             }
         }
-    
+
     }
 }

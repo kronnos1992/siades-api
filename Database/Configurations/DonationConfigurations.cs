@@ -17,10 +17,6 @@ namespace siades.Database.Configurations
                 .Property(p => p.BloodGroup)
                 .IsRequired()
                 .HasMaxLength(200);
-
-            builder
-                .HasIndex(p => p.BloodGroup)
-                .IsUnique();
         }
     }
 }

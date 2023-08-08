@@ -53,15 +53,12 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<IEnumerable<Hospital>> GetValues()
+        public async Task<IEnumerable<Hospital>?> GetValues()
         {
             try
             {
-                var hospital = await dbcontext.Tb_Hospital
-                    .Include(x => x.ListRequest)
-                    //.GroupBy(x => x.CreatedAt)
-                    .ToListAsync();
-                if (hospital.ToString().Length > 0)
+                var hospital = await dbcontext.Tb_Hospital.ToListAsync();
+                if (hospital.Count > 0)
                 {
                     return hospital;
                 }

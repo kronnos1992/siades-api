@@ -22,12 +22,12 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewSpeciality([FromBody] SpecialityDTO entity)
+        public async Task<IActionResult> AddSpeciality([FromBody] SpecialityDTO entity)
         {
             try
             {
                 await repository.NewSpeciality(entity);
-                return Ok();
+                return Created("", entity);
             }
             catch (Exception ex)
             {
@@ -39,9 +39,9 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<Speciality>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var speciality = repository.GetValues();
+            var speciality = await repository.GetValues();
             if (speciality == null)
             {
                 return NotFound();
@@ -71,14 +71,14 @@ namespace siades.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(201)]
         public async Task<IActionResult> Update([FromBody] SpecialityDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return NoContent();
+                return Created("registro atualizado", entity);
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace siades.Controllers
         }
 
         [HttpDelete]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(201)]
         public async Task<IActionResult> Delete(int id)
         {

@@ -11,6 +11,8 @@ public class Person : EntityDefault
     public string? FullName { get; set; }
     public string? IdentDocNumber { get; set; }
     public string? TypeIdentNumber { get; set; }
+    public DateTime BirthDate { get; set; }
+    public int Age { get; set; }
 
     //relacionamentos
     public Contact? GetContact { get; set; }

@@ -17,14 +17,22 @@ namespace siades.Database.Configurations
                 .IsRequired();
 
             builder
+                .HasIndex(p => p.PhoneCode)
+                .IsUnique();
+
+            builder
+                .HasIndex(p => p.CountryName)
+                .IsUnique();
+
+            builder
                 .Property(p => p.PhoneCode)
                 .HasMaxLength(5)
-                .IsRequired(); 
+                .IsRequired();
 
             builder
                 .HasMany(p => p.ProvinceList)
-                .WithOne(p => p.GetCountry);          
-           
+                .WithOne(p => p.GetCountry);
+
         }
     }
 }
