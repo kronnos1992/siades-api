@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace siades.Database.Persistence
+namespace siades.Database.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class fullv1migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -184,6 +184,8 @@ namespace siades.Database.Persistence
                     FullName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     IdentDocNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     TypeIdentNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
                     ContactId = table.Column<int>(type: "int", nullable: true),
                     GetAddressId = table.Column<int>(type: "int", nullable: true),
                     GetBloodId = table.Column<int>(type: "int", nullable: true),
@@ -260,29 +262,31 @@ namespace siades.Database.Persistence
                 });
 
             migrationBuilder.CreateTable(
-                name: "SpecialityDoctor",
+                name: "Tb_DocSpeciality",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GetDoctorId = table.Column<int>(type: "int", nullable: true),
-                    GetSpecialityId = table.Column<int>(type: "int", nullable: true),
+                    DoctorId = table.Column<int>(type: "int", nullable: false),
+                    SpecialityId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SpecialityDoctor", x => x.Id);
+                    table.PrimaryKey("PK_Tb_DocSpeciality", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SpecialityDoctor_Tb_Doctor_GetDoctorId",
-                        column: x => x.GetDoctorId,
+                        name: "FK_Tb_DocSpeciality_Tb_Doctor_DoctorId",
+                        column: x => x.DoctorId,
                         principalTable: "Tb_Doctor",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SpecialityDoctor_Tb_Speciality_GetSpecialityId",
-                        column: x => x.GetSpecialityId,
+                        name: "FK_Tb_DocSpeciality_Tb_Speciality_SpecialityId",
+                        column: x => x.SpecialityId,
                         principalTable: "Tb_Speciality",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -296,6 +300,8 @@ namespace siades.Database.Persistence
                     IsHomeDonor = table.Column<bool>(type: "bit", nullable: false),
                     HasFamDonor = table.Column<bool>(type: "bit", nullable: false),
                     DiseasedAge = table.Column<int>(type: "int", nullable: false),
+                    Qty = table.Column<int>(type: "int", nullable: false),
+                    BloodGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GetDonorId = table.Column<int>(type: "int", nullable: true),
                     GetHospitalId = table.Column<int>(type: "int", nullable: true),
                     GetBloodId = table.Column<int>(type: "int", nullable: true),
@@ -346,16 +352,6 @@ namespace siades.Database.Persistence
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SpecialityDoctor_GetDoctorId",
-                table: "SpecialityDoctor",
-                column: "GetDoctorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SpecialityDoctor_GetSpecialityId",
-                table: "SpecialityDoctor",
-                column: "GetSpecialityId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tb_Address_GetTownShiepId",
                 table: "Tb_Address",
                 column: "GetTownShiepId");
@@ -382,21 +378,37 @@ namespace siades.Database.Persistence
                 column: "GetHospitalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tb_Doctor_BloodGroupName",
+                name: "IX_Tb_Country_CountryName",
+                table: "Tb_Country",
+                column: "CountryName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tb_Country_PhoneCode",
+                table: "Tb_Country",
+                column: "PhoneCode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tb_DocSpeciality_DoctorId",
+                table: "Tb_DocSpeciality",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tb_DocSpeciality_SpecialityId",
+                table: "Tb_DocSpeciality",
+                column: "SpecialityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tb_Doctor_DocNumber",
                 table: "Tb_Doctor",
-                column: "BloodGroupName",
+                column: "DocNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tb_Doctor_GetPersonId",
                 table: "Tb_Doctor",
                 column: "GetPersonId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tb_Donation_BloodGroup",
-                table: "Tb_Donation",
-                column: "BloodGroup",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tb_Donation_DonorId",
@@ -431,6 +443,12 @@ namespace siades.Database.Persistence
                 column: "GetBloodId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tb_Person_IdentDocNumber",
+                table: "Tb_Person",
+                column: "IdentDocNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tb_Province_GetCountryId",
                 table: "Tb_Province",
                 column: "GetCountryId");
@@ -451,10 +469,10 @@ namespace siades.Database.Persistence
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "SpecialityDoctor");
+                name: "Tb_BloodRequest");
 
             migrationBuilder.DropTable(
-                name: "Tb_BloodRequest");
+                name: "Tb_DocSpeciality");
 
             migrationBuilder.DropTable(
                 name: "Tb_Donation");
@@ -463,13 +481,13 @@ namespace siades.Database.Persistence
                 name: "Tb_StockHold");
 
             migrationBuilder.DropTable(
+                name: "Tb_Hospital");
+
+            migrationBuilder.DropTable(
                 name: "Tb_Doctor");
 
             migrationBuilder.DropTable(
                 name: "Tb_Speciality");
-
-            migrationBuilder.DropTable(
-                name: "Tb_Hospital");
 
             migrationBuilder.DropTable(
                 name: "Tb_Donor");

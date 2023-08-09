@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using siades.Database.DataContext;
 
 #nullable disable
 
-namespace siades.Database.Persistence
+namespace siades.Database.Persistence.Migrations
 {
     [DbContext(typeof(SiadesDbContext))]
-    [Migration("20230808143610_Review 4")]
-    partial class Review4
+    partial class SiadesDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,7 +241,7 @@ namespace siades.Database.Persistence
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BloodGroupName")
+                    b.HasIndex("DocNumber")
                         .IsUnique();
 
                     b.HasIndex("GetPersonId");
@@ -278,9 +275,6 @@ namespace siades.Database.Persistence
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BloodGroup")
-                        .IsUnique();
 
                     b.HasIndex("DonorId");
 
@@ -419,6 +413,9 @@ namespace siades.Database.Persistence
 
                     b.HasIndex("GetBloodId");
 
+                    b.HasIndex("IdentDocNumber")
+                        .IsUnique();
+
                     b.ToTable("Tb_Person");
                 });
 
@@ -490,10 +487,10 @@ namespace siades.Database.Persistence
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("GetDoctorId")
+                    b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GetSpecialityId")
+                    b.Property<int>("SpecialityId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -501,11 +498,11 @@ namespace siades.Database.Persistence
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GetDoctorId");
+                    b.HasIndex("DoctorId");
 
-                    b.HasIndex("GetSpecialityId");
+                    b.HasIndex("SpecialityId");
 
-                    b.ToTable("SpecialityDoctor");
+                    b.ToTable("Tb_DocSpeciality");
                 });
 
             modelBuilder.Entity("siades.Models.StockHold", b =>
@@ -661,11 +658,15 @@ namespace siades.Database.Persistence
                 {
                     b.HasOne("siades.Models.Doctor", "GetDoctor")
                         .WithMany("Specialities")
-                        .HasForeignKey("GetDoctorId");
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("siades.Models.Speciality", "GetSpeciality")
                         .WithMany("Doctors")
-                        .HasForeignKey("GetSpecialityId");
+                        .HasForeignKey("SpecialityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("GetDoctor");
 

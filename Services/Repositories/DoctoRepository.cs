@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
@@ -9,6 +10,7 @@ namespace siades.Services.Repositories
     public class DoctoRepository : IDoctoRepository
     {
         private readonly SiadesDbContext dbcontext;
+        private string _regex = @"^[0-9]{9}[a-zA-Z]{2}[0-9]{3}$";
 
         public DoctoRepository(SiadesDbContext dbcontext)
         {
@@ -108,6 +110,9 @@ namespace siades.Services.Repositories
 
                 if (blood != null && townShiep != null)
                 {
+                    if (!Regex.IsMatch(entity.IdNumber.Trim().ToUpper(), _regex))
+                        throw new ArgumentException("O bilhete de identidade nao corresponde o padrão 000000000AZ000.");
+
                     var newDoctor = new Doctor
                     {
                         // doctor
@@ -163,6 +168,9 @@ namespace siades.Services.Repositories
             {
                 var doctor = await dbcontext.Tb_Doctor
                     .FirstOrDefaultAsync(x => x.Id == Id);
+
+                if (!Regex.IsMatch(entity.IdNumber.Trim().ToUpper(), _regex))
+                    throw new ArgumentException("O bilhete de identidade nao corresponde o padrão 000000000AZ000.");
                 if (doctor.ToString().Length > 0)
                 {
                     doctor.UpdatedAt = DateTime.Now;

@@ -7,9 +7,9 @@ namespace siades.Database.DataContext
 
     public class SiadesDbContext : DbContext
     {
-        public SiadesDbContext(DbContextOptions<SiadesDbContext> options) :base(options)
+        public SiadesDbContext(DbContextOptions<SiadesDbContext> options) : base(options)
         {
-           
+
         }
 
         public DbSet<Address>? Tb_Address { get; set; }
@@ -24,8 +24,9 @@ namespace siades.Database.DataContext
         public DbSet<Blood>? Tb_Blood { get; set; }
         public DbSet<StockHold>? Tb_StockHold { get; set; }
         public DbSet<TownShiep>? Tb_TownShiep { get; set; }
-        public DbSet<Speciality>? Tb_Speciality {get; set;}
-        public DbSet<Donation>? Tb_Donation {get; set;}
+        public DbSet<Speciality>? Tb_Speciality { get; set; }
+        public DbSet<SpecialityDoctor>? Tb_DocSpeciality { get; set; }
+        public DbSet<Donation>? Tb_Donation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,9 +45,9 @@ namespace siades.Database.DataContext
             modelBuilder.ApplyConfiguration(new SpecialityConfigurations());
             modelBuilder.ApplyConfiguration(new StockHoldConfigurations());
             modelBuilder.ApplyConfiguration(new TownShiepConfigurations());
-            
-            
+
+
             base.OnModelCreating(modelBuilder);
-        }   
+        }
     }
 }

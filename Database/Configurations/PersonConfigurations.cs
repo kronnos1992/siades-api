@@ -4,13 +4,13 @@ using siades.Models;
 
 namespace siades.Database.Configurations
 {
-    public class PersonConfigurations: IEntityTypeConfiguration<Person>
+    public class PersonConfigurations : IEntityTypeConfiguration<Person>
     {
         public void Configure(EntityTypeBuilder<Person> builder)
         {
             builder
                 .HasKey(p => p.Id);
-            
+
             builder
                 .Property(p => p.FullName)
                 .IsRequired()
@@ -19,9 +19,12 @@ namespace siades.Database.Configurations
             builder
                 .Property(p => p.IdentDocNumber)
                 .IsRequired()
-                .HasMaxLength(15)
-                .Metadata.IsUniqueIndex();
-            
+                .HasMaxLength(15);
+
+            builder
+                .HasIndex(p => p.IdentDocNumber)
+                .IsUnique();
+
             builder
                 .Property(p => p.TypeIdentNumber)
                 .IsRequired()
@@ -33,14 +36,14 @@ namespace siades.Database.Configurations
 
             builder
                 .HasOne(x => x.GetContact)
-                
+
                 .WithOne(x => x.GetPerson)
                 .HasForeignKey("Person", "ContactId");
 
             builder
                 .HasOne(x => x.GetBlood)
                 .WithMany(x => x.People);
-            
+
             builder
                 .HasMany(x => x.DoctorsList)
                 .WithOne(x => x.GetPerson);

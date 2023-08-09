@@ -14,8 +14,11 @@ namespace siades.Database.Configurations
             builder
                 .Property(p => p.DocNumber)
                 .IsRequired()
-                .HasMaxLength(50)
-                .Metadata.IsUniqueIndex();
+                .HasMaxLength(50);
+
+            builder
+                .HasIndex(p => p.DocNumber)
+                .IsUnique();
 
             builder
                 .Property(p => p.BloodGroupName)
