@@ -192,6 +192,7 @@ public static class ServiceCollectionExtensions
         builder.AddRoleValidator<RoleValidator<Roles>>();
         builder.AddRoleManager<RoleManager<Roles>>();
         builder.AddSignInManager<SignInManager<Users>>();
+
         return builder;
     }
 

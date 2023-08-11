@@ -17,15 +17,68 @@ namespace siades.Services.Repositories
         private readonly UserManager<Users> userManager;
         private readonly SignInManager<Users> signInManager;
         private readonly IMapper mapper;
+        private readonly RoleManager<Roles> roleManager;
 
-        public AuthRepository( IConfiguration configuration, UserManager<Users> userManager, SignInManager<Users> signInManager,IMapper mapper)
+        public AuthRepository( 
+            IConfiguration configuration, 
+            UserManager<Users> userManager, 
+            SignInManager<Users> signInManager,
+            RoleManager<Roles> roleManager, 
+            IMapper mapper
+        )
         {
             this.configuration = configuration;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.mapper = mapper;
+            this.roleManager = roleManager;
         }
 
+        /* public async Task<bool> AssignRoleToUser(string userId, string roleName)
+        {
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return false;
+                }
+
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    return false;
+                }
+
+                var result = await userManager.AddToRoleAsync(user, roleName);
+                return result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        public async Task<RoleDTO> CreateRole(RoleDTO roleDTO)
+        {
+           try
+            {
+                var role = mapper.Map<Roles>(roleDTO);
+                var roleMaped = await roleManager.CreateAsync(role);
+                var output = mapper.Map<RoleDTO>(role);
+
+                if (roleMaped.Succeeded)
+                {
+                    return output;
+                }
+                throw new Exception($"{roleMaped.Errors}");            
+            }
+            catch (System.Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+ */
         public async Task<UserDTO> GetUserAsync(UserDTO userDTO)
         {
             return userDTO;
@@ -111,6 +164,7 @@ namespace siades.Services.Repositories
 
             return tokenHandler.WriteToken(token);
         }  
-                
+
+            
     }
 }

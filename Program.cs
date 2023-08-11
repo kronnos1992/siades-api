@@ -34,9 +34,7 @@ internal class Program
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
-        app.UseAuthorization();
-
-        //app.UseMvc()
+        //app.UseAuthorization();
 
         app.MapControllers();
         //.RequireAuthorization(args);

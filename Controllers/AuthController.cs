@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using siades.Models.IdentityModels;
 using siades.Services.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using siades.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace siades.Controllers
 {
@@ -22,14 +16,14 @@ namespace siades.Controllers
             this.authRepository = authRepository;
         }
 
-        [HttpGet("GetUser")]
+        [HttpGet("getuser")]
         public async Task<IActionResult> GetUSer(UserDTO userDTO)
         {
             await authRepository.GetUserAsync(userDTO);
             return Ok();
         }
 
-        [HttpPost("SignUp")]
+        [HttpPost("signup")]
         [AllowAnonymous]
         public async Task<IActionResult> SignUp(UserDTO userDTO)
         {
@@ -43,7 +37,7 @@ namespace siades.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("Login")]
+        [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDTO userDTO)
         {
@@ -61,5 +55,6 @@ namespace siades.Controllers
                 return BadRequest(ex);
             };
         }
+    
     }
 }
