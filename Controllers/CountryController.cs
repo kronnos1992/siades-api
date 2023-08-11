@@ -42,9 +42,9 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<Country>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var blood = repository.GetValues();
+            var blood = await repository.GetValues();
             if (blood == null)
             {
                 return NotFound();
@@ -88,7 +88,7 @@ namespace siades.Controllers
                 return BadRequest(ex.Message);
             }
         }
-    
+
         [HttpDelete]
         [ProducesResponseType(404)]
         [ProducesResponseType(201)]

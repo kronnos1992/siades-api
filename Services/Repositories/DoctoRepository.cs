@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
+using siades.Models.IdentityModels;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
 
@@ -10,7 +11,9 @@ namespace siades.Services.Repositories
     public class DoctoRepository : IDoctoRepository
     {
         private readonly SiadesDbContext dbcontext;
-        private string _regex = @"^[0-9]{9}[a-zA-Z]{2}[0-9]{3}$";
+        private readonly string _regex = @"^[0-9]{9}[a-zA-Z]{2}[0-9]{3}$";
+        private readonly string _regex2 = @"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$";
+
 
         public DoctoRepository(SiadesDbContext dbcontext)
         {
@@ -111,7 +114,10 @@ namespace siades.Services.Repositories
                 if (blood != null && townShiep != null)
                 {
                     if (!Regex.IsMatch(entity.IdNumber.Trim().ToUpper(), _regex))
-                        throw new ArgumentException("O bilhete de identidade nao corresponde o padrão 000000000AZ000.");
+                        throw new ArgumentException("O numero de bilhete identidade foi mal escrito.");
+
+                    if (!Regex.IsMatch(entity.EmailAdrress.Trim().ToLower(), _regex2))
+                        throw new ArgumentException("= endereço de email foi mal escrito.");
 
                     var newDoctor = new Doctor
                     {

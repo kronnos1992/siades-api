@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
@@ -9,6 +10,8 @@ namespace siades.Services.Repositories;
 public class DonoRepository : IDonoRepository
 {
     private readonly SiadesDbContext dbContext;
+    private readonly string _regex = @"^[0-9]{9}[a-zA-Z]{2}[0-9]{3}$";
+    private readonly string _regex2 = @"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$";
 
     public DonoRepository(SiadesDbContext dbContext)
     {
@@ -72,6 +75,11 @@ public class DonoRepository : IDonoRepository
 
     public async Task NewDonor(DonorDTO entity, int bloodId, int townId)
     {
+        if (!Regex.IsMatch(entity.IdentDocNumber.Trim().ToUpper(), _regex))
+            throw new ArgumentException("O numero de bilhete identidade foi mal escrito.");
+
+        if (!Regex.IsMatch(entity.EmailAdrress.Trim().ToLower(), _regex2))
+            throw new ArgumentException("= endereço de email foi mal escrito.");
         try
         {
             var town = dbContext.Tb_TownShiep

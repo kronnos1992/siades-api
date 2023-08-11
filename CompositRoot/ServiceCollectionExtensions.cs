@@ -2,17 +2,24 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using siades.Database.DataContext;
+using siades.Models.IdentityModels;
 using siades.Services.Interfaces;
+using siades.Services.Mapping;
 using siades.Services.Repositories;
 
 namespace siades.CompositRoot;
@@ -24,10 +31,21 @@ public static class ServiceCollectionExtensions
         builder.Services.AddSwagger();
         return builder;
     }
-
+    public static WebApplicationBuilder AddUSerConfigurations(this WebApplicationBuilder builder)
+    {
+        builder.Services.UserValidations();
+        return builder;
+    }
     public static WebApplicationBuilder AddControllersConfig(this WebApplicationBuilder builder)
     {
-        builder.Services.AddControllers()
+        builder.Services.AddControllers(op =>{
+            //politica de autenticação
+            var policy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .Build();
+            op.Filters.Add(new AuthorizeFilter(policy));
+        }) 
+        //politica de controlo de loops e serialização
             .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling
                 = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
@@ -45,7 +63,6 @@ public static class ServiceCollectionExtensions
             });
         return builder;
     }
-
     public static WebApplicationBuilder AddDataProtectionConfig(this WebApplicationBuilder builder)
     {
         builder.Services
@@ -58,7 +75,6 @@ public static class ServiceCollectionExtensions
 
         return builder;
     }
-
     public static WebApplicationBuilder AddAuthenticationConfig(this WebApplicationBuilder builder)
     {
         builder.Services.AddAuthentication(o =>
@@ -71,19 +87,21 @@ public static class ServiceCollectionExtensions
         {
             p.TokenValidationParameters = new TokenValidationParameters
             {
-                // jwt definitions
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidateTokenReplay = true,
+                IssuerSigningKey = new SymmetricSecurityKey
+                    //(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                    (Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
                 
-
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(builder.Configuration["Jwt:Key"])),
-                ClockSkew = TimeSpan.Zero,
-                SaveSigninToken = true
+                // jwt definitions
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                
+                //ValidateLifetime = true,
+                //ValidateTokenReplay = true,
+                //ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                //ValidAudience = builder.Configuration["Jwt:Audience"],
+                //ClockSkew = TimeSpan.Zero,
+                //SaveSigninToken = true
 
             };
             p.AutomaticRefreshInterval = TimeSpan.FromSeconds(10);
@@ -92,7 +110,6 @@ public static class ServiceCollectionExtensions
         builder.Services.AddAuthorization();
         return builder;
     }
-
     public static WebApplicationBuilder AddConfigurationConfig(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<FormOptions>(o =>
@@ -103,7 +120,6 @@ public static class ServiceCollectionExtensions
         });
         return builder;
     }
-
     // configurar o swagger para receber tokens no header 
     public static IServiceCollection AddSwagger(this IServiceCollection _services)
     {
@@ -158,6 +174,26 @@ public static class ServiceCollectionExtensions
         });
         return _services;
     }
+    public static IdentityBuilder UserValidations(this IServiceCollection services)
+    {
+        //politica de senhas
+        IdentityBuilder builder = services.AddIdentityCore<Users>(o =>
+        {
+            o.Password.RequireDigit = false;
+            o.Password.RequireNonAlphanumeric = false;
+            o.Password.RequireLowercase = false;
+            o.Password.RequireUppercase = false;
+            o.Password.RequiredLength = 4;
+            //o.Password.RequiredUniqueChars = 3;
+        });
+        //politica de roles e usuarios
+        builder = new IdentityBuilder(builder.UserType, typeof(Roles), builder.Services);
+        builder.AddEntityFrameworkStores<SiadesDbContext>();
+        builder.AddRoleValidator<RoleValidator<Roles>>();
+        builder.AddRoleManager<RoleManager<Roles>>();
+        builder.AddSignInManager<SignInManager<Users>>();
+        return builder;
+    }
 
     // servicos de persistencia no bd
     public static WebApplicationBuilder AddPersistence(this WebApplicationBuilder builder)
@@ -166,6 +202,15 @@ public static class ServiceCollectionExtensions
         builder.Services.AddDbContext<SiadesDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
         );
+
+        // injectar serviços do automapper
+        var mapConfig = new MapperConfiguration( conf => {
+              conf.AddProfile(new MappingProfile());
+        });
+        var mapper = mapConfig.CreateMapper();
+        builder.Services.AddSingleton(mapper);
+
+
         builder.Services.AddTransient<IBloodRepository, BloodRepository>().AddLogging();
         builder.Services.AddTransient<ICountryRepository, CountryRepository>().AddLogging();
         builder.Services.AddTransient<IProvinceRepository, ProvinceRepository>().AddLogging();
@@ -176,6 +221,7 @@ public static class ServiceCollectionExtensions
         builder.Services.AddTransient<IDoctoRepository, DoctoRepository>();
         builder.Services.AddTransient<IDonoRepository, DonoRepository>();
         builder.Services.AddTransient<IDonationRepository, DonationRepository>();
+        builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
         builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 

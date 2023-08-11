@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using siades.CompositRoot;
 internal class Program
 {
@@ -8,11 +10,13 @@ internal class Program
         // Add services to the container.
         // webapplication services drom compositroot
         builder.AddControllersConfig();
+        builder.AddUSerConfigurations();
         builder.AddSwaggerConfig();
         builder.AddDataProtectionConfig();
         builder.AddConfigurationConfig();
-
         builder.AddAuthenticationConfig();
+        builder.AddPersistence();
+        
         builder.Services.AddCors();
         builder.Services.AddEndpointsApiExplorer();
 
@@ -27,13 +31,15 @@ internal class Program
         // iapplication services from compositroot
         app.UseAppCors();
         app.UseAppStaticFiles();
-
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
         app.UseAuthorization();
 
+        //app.UseMvc()
+
         app.MapControllers();
+        //.RequireAuthorization(args);
 
         app.Run();
     }

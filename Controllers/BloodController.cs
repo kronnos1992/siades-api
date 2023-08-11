@@ -40,16 +40,16 @@ public class BloodController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
-    public ActionResult<IEnumerable<Blood>> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
-        var blood = repository.GetValues();
+        var blood = await repository.GetValues();
         if (blood == null)
         {
             return NotFound();
         }
         return Ok(blood);
     }
-    
+
     [HttpGet]
     [Route("getone")]
     [ProducesResponseType(404)]
