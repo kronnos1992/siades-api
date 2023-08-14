@@ -16,13 +16,6 @@ namespace siades.Controllers
             this.authRepository = authRepository;
         }
 
-        [HttpGet("getuser")]
-        public async Task<IActionResult> GetUSer(UserDTO userDTO)
-        {
-            await authRepository.GetUserAsync(userDTO);
-            return Ok();
-        }
-
         [HttpPost("signup")]
         [AllowAnonymous]
         public async Task<IActionResult> SignUp(UserDTO userDTO)
@@ -30,7 +23,7 @@ namespace siades.Controllers
             try
             {
                 var user = await authRepository.RegisterAsync(userDTO);
-                return Created("api/auth/signup", userDTO);
+                return Ok(userDTO);
             }
             catch (Exception ex)
             {
@@ -49,6 +42,43 @@ namespace siades.Controllers
                     return Unauthorized();
                 }
                 return Ok(login);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            };
+        }
+        
+        [HttpPost("role")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateRoleAsync(string name)
+        {
+            try
+            {
+                var role =await authRepository.CreateRoleAsync(name);
+                if (role == null)
+                {
+                    return Unauthorized();
+                }
+                return Created("",role);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            };
+        }
+        [HttpPost("roleusers")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SignRolesToUsers(string value1, string value2)
+        {
+            try
+            {
+                var role =await authRepository.AssignRoleToUser(value1,value2);
+                if (role == null)
+                {
+                    return Unauthorized();
+                }
+                return Created("",role);
             }
             catch (Exception ex)
             {

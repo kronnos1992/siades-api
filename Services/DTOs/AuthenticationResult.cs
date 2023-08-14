@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using siades.Services.DTOs;
 
-namespace siades.Models.IdentityModels
+namespace siades.Services.DTOs
 {
     public class AuthenticationResult
     {

@@ -4,29 +4,31 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
-using siades.Models.IdentityModels;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
+using AuthenticationResult = siades.Services.DTOs.AuthenticationResult;
 
 namespace siades.Services.Repositories
 {
     public class AuthRepository : IAuthRepository
     {
         private readonly IConfiguration configuration;
-        private readonly UserManager<Users> userManager;
-        private readonly SignInManager<Users> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly SignInManager<IdentityUser> signInManager;
         private readonly IMapper mapper;
-        private readonly RoleManager<Roles> roleManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
         public AuthRepository( 
             IConfiguration configuration, 
-            UserManager<Users> userManager, 
-            SignInManager<Users> signInManager,
-            RoleManager<Roles> roleManager, 
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager,
+            RoleManager<IdentityRole> roleManager, 
             IMapper mapper
         )
         {
+
             this.configuration = configuration;
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -34,7 +36,32 @@ namespace siades.Services.Repositories
             this.roleManager = roleManager;
         }
 
-        /* public async Task<bool> AssignRoleToUser(string userId, string roleName)
+        public async Task<string> CreateRoleAsync(string roleName)
+        {
+            try
+            {
+                var findRole = await roleManager.RoleExistsAsync(roleName);
+                if (!findRole)
+                {
+                    var role = await roleManager.CreateAsync(new IdentityRole(roleName));
+                    if (role.Succeeded)
+                    {
+                        return role.Succeeded.ToString();
+                    }
+                    else
+                    {
+                        return role.Errors.ToString();
+                    }
+                }
+                return "A role inserida ja existe";         
+            }
+            catch (System.Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        public async Task<string> AssignRoleToUser(string userId, string roleName)
         {
             try
             {
@@ -42,43 +69,23 @@ namespace siades.Services.Repositories
 
                 if (user == null)
                 {
-                    return false;
+                    return "nenhum usuario encontrado";
                 }
 
                 if (!await roleManager.RoleExistsAsync(roleName))
                 {
-                    return false;
+                    return "role não encontrada";
                 }
 
                 var result = await userManager.AddToRoleAsync(user, roleName);
-                return result.Succeeded;
+                return result.ToString();
             }
             catch (Exception ex)
             {
                 throw new Exception("", ex);
             }
         }
-
-        public async Task<RoleDTO> CreateRole(RoleDTO roleDTO)
-        {
-           try
-            {
-                var role = mapper.Map<Roles>(roleDTO);
-                var roleMaped = await roleManager.CreateAsync(role);
-                var output = mapper.Map<RoleDTO>(role);
-
-                if (roleMaped.Succeeded)
-                {
-                    return output;
-                }
-                throw new Exception($"{roleMaped.Errors}");            
-            }
-            catch (System.Exception ex)
-            {
-                throw new Exception("", ex);
-            }
-        }
- */
+        
         public async Task<UserDTO> GetUserAsync(UserDTO userDTO)
         {
             return userDTO;
@@ -123,7 +130,7 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var user = mapper.Map<Users>(userDTO);
+                var user = mapper.Map<IdentityUser>(userDTO);
                 var userMaped = await userManager.CreateAsync(user, userDTO.Password);
                 var output = mapper.Map<UserDTO>(user);
 
@@ -139,7 +146,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        private async Task<string> GenerateToken(Users? user)
+        private async Task<string> GenerateToken(IdentityUser? user)
         {
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -164,7 +171,6 @@ namespace siades.Services.Repositories
 
             return tokenHandler.WriteToken(token);
         }  
-
             
     }
 }

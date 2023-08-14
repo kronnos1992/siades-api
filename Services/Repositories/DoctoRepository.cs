@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
-using siades.Models.IdentityModels;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
 
