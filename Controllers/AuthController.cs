@@ -17,7 +17,7 @@ namespace siades.Controllers
         }
 
         [HttpPost("signup")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "admin")]
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -66,7 +66,7 @@ namespace siades.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(200)]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateRoleAsync(string name)
         {
             try
@@ -76,15 +76,16 @@ namespace siades.Controllers
                 {
                     return Unauthorized();
                 }
-                return Ok($"Role {role} adicionada com sucesso");
+                return Ok($"Role {name} adicionada com sucesso");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             };
         }
+
         [HttpPost("roleusers")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "admin")]
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -105,6 +106,52 @@ namespace siades.Controllers
                 return BadRequest($"Ocorreu um erro, por favor tente novamente {ex.Message}");
             };
         }
-    
+        [HttpGet("get-users")]
+        [Produces("application/json")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(200)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUsers()
+        {
+            try
+            {
+                var user = await authRepository.GetUsers();
+                if (user == null)
+                {
+                    return NotFound("nenhum registro encontrado");
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro, por favor tente novamente {ex.Message}");
+            };
+        }
+
+        [HttpGet("get-roles")]
+        [Produces("application/json")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(200)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetRoles()
+        {
+            try
+            {
+                var user = await authRepository.GetRoles();
+                if (user == null)
+                {
+                    return NotFound("nenhum registro encontrado");
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocorreu um erro, por favor tente novamente {ex.Message}");
+            };
+        }
     }
 }

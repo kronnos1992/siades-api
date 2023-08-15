@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using siades.Services.DTOs;
@@ -82,14 +83,22 @@ namespace siades.Services.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                throw new Exception("Erro de banco de dados", ex);
             }
         }
-        
-        public async Task<UserDTO> GetUserAsync(UserDTO userDTO)
+
+        public async Task<UserDTO> GetUserAsync()
         {
-            await Task.CompletedTask;
-            return userDTO;
+            try
+            {
+                var user = await userManager.Users.ToListAsync();
+                var userD = mapper.Map<UserDTO>(user);
+                return userD;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro de banco de dados", ex);
+            }
         }
         public async Task<AuthenticationResult> LoginAsync(UserLoginDTO userDTO)
         {
@@ -171,7 +180,27 @@ namespace siades.Services.Repositories
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
-        }  
-            
+        }
+
+        public async Task<IEnumerable<IdentityRole>> GetRoles()
+        {
+            var roles = await roleManager.Roles.ToListAsync()
+                ?? throw new Exception("nenhum registro encontrado. ");
+            return roles;
+        }
+
+        public async Task<IEnumerable<IdentityUser>> GetUsers()
+        {
+            try
+            {
+                var users = await userManager.Users.ToListAsync()
+                    ?? throw new Exception("nenhum registro encontrado. ");
+                return users;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro de banco de dados", ex);
+            }
+        }
     }
 }
