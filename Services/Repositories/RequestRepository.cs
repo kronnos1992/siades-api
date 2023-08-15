@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Azure.Messaging;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
@@ -19,23 +16,30 @@ namespace siades.Services.Repositories
         }
         public async Task AproveRequest(int id)
         {
+
             try
             {
                 var request = await dbContext.Tb_BloodRequest.FirstOrDefaultAsync(x => x.Id == id);
+
                 var reduceInStock = await dbContext.Tb_StockHold.SingleOrDefaultAsync(x => x.StockHoldId == request.BloodGroup);
                 if (request.ToString().Length > 0)
                 {
-                    request.IsAcepted = true;
-                    if (reduceInStock != null)
-                        reduceInStock.Qty -= request.Qty;
+                    if (reduceInStock.Qty >= 10)
+                    {
+                        request.IsAcepted = true;
+                        if (reduceInStock != null)
+                            reduceInStock.Qty -= request.Qty;
 
-                    dbContext.UpdateRange(request, reduceInStock);
-                    await dbContext.SaveChangesAsync();
+                        dbContext.UpdateRange(request, reduceInStock);
+                        await dbContext.SaveChangesAsync();
+                    }
+                    throw new Exception("Quantidade inferior ao recomendado");
                 }
+                throw new Exception("Quantidade inferior ao recomendado");
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                throw new Exception("Erro", ex);
             }
         }
 

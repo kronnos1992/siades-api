@@ -35,27 +35,36 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var hospital = await repository.GetValues();
-            if (hospital == null)
+            try
             {
-                return NotFound();
+                var hospital = await repository.GetValues();
+                if (hospital == null)
+                {
+                    return NotFound("Nenhum registro encontrado");
+                }
+                return Ok(hospital);
             }
-            return Ok(hospital);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -64,35 +73,35 @@ namespace siades.Controllers
                 var hospital = await repository.GetValue(id);
                 if (hospital == null)
                 {
-                    return NotFound();
+                    return NotFound("Registro não encontrado");
                 }
                 return Ok(hospital);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] HospitalDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return NoContent();
+                return Ok("Regitro atualizado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpDelete]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -102,7 +111,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
     }

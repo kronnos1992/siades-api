@@ -8,9 +8,9 @@ public class Country : EntityDefault
     {
         ProvinceList = new HashSet<Province>();
     }
-    public string? PhoneCode { get; set; }
-    public string? CountryName { get; set; }        
-    
+    public string PhoneCode { get; set; }
+    public string CountryName { get; set; }
+
     // List of provinces
-    public readonly ICollection<Province>? ProvinceList;
+    public readonly ICollection<Province> ProvinceList;
 }

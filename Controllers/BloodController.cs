@@ -22,37 +22,47 @@ public class BloodController : ControllerBase
     [HttpPost]
     [Produces("application/json")]
     [ProducesResponseType(400)]
-    [ProducesResponseType(201)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> AddNewBlood([FromBody] BloodDTo entity)
     {
         try
         {
             await repository.NewBlood(entity);
-            return Ok($"Grupo: {entity.Name}");
+            return Ok($"Grupo: {entity.Name} inserido com sucesso");
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest($"Houve erro no cadastro, por favor tente novamente {ex.Message}");
         }
     }
 
     [HttpGet]
     [Produces("application/json")]
     [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetAllAsync()
     {
-        var blood = await repository.GetValues();
-        if (blood == null)
+        try
         {
-            return NotFound();
+            var blood = await repository.GetValues();
+            if (blood == null)
+            {
+                return NotFound($"grupo {blood} não encontrado");
+            }
+            return Ok(blood);
         }
-        return Ok(blood);
+        catch (Exception ex)
+        {
+            return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+        }
     }
 
     [HttpGet]
     [Route("getone")]
     [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetAsync(int id)
     {
@@ -61,29 +71,29 @@ public class BloodController : ControllerBase
             var blood = await repository.GetValue(id);
             if (blood == null)
             {
-                return NotFound();
+                return NotFound($"Grupo sanguineo {blood} não encontrado");
             }
             return Ok(blood);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest($"Houve erro no cadastro, por favor tente novamente {ex.Message}");
         }
     }
 
     [HttpPut]
     [ProducesResponseType(404)]
-    [ProducesResponseType(201)]
+    [ProducesResponseType(200)]
     public async Task<IActionResult> Update([FromBody] BloodDTo entity, int id)
     {
         try
         {
             await repository.Update(entity, id);
-            return Ok($"Grupo: {entity.Name}");
+            return Ok($"Grupo: {entity.Name} atualizado");
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest($"Erro, por favor tente novamente {ex.Message}");
         }
     }
 
@@ -99,7 +109,7 @@ public class BloodController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest($"Erro, por favor tente novamente {ex.Message}");
         }
     }
 

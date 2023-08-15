@@ -25,17 +25,17 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> AddDoctor([FromBody] DoctorDTO entity, int bloodId, int townId)
         {
             try
             {
                 await repository.NewDoctor(entity, bloodId, townId);
-                return Created("", entity);
+                return Ok($"{entity} adicionado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
@@ -43,17 +43,17 @@ namespace siades.Controllers
         [Route("add-speciality")]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> NewDoctorSpeciality(int doctorId, int specialityId)
         {
             try
             {
                 await repository.LinkDocSpeciality(doctorId, specialityId);
-                return Created("", "Registro adicionado");
+                return Ok($"Registro atualizado com sucesso.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
@@ -61,20 +61,29 @@ namespace siades.Controllers
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var doctor = await repository.GetValues();
-            if (doctor == null)
+            try
             {
-                return NotFound();
+                var doctor = await repository.GetValues();
+                if (doctor == null)
+                {
+                    return NotFound("Nenhum registro encontrado");
+                }
+                return Ok(doctor);
             }
-            return Ok(doctor);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -83,35 +92,35 @@ namespace siades.Controllers
                 var doctor = await repository.GetValue(id);
                 if (doctor == null)
                 {
-                    return NotFound();
+                    return NotFound("Registro não encontrado");
                 }
                 return Ok(doctor);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] DoctorDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return NoContent();
+                return Ok($"Registro atualizado com sucesso.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpDelete]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -121,7 +130,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 

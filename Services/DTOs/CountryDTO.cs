@@ -1,8 +1,8 @@
-namespace siades.Services.DTOs.BloodDTO
+namespace siades.Services.DTOs
 {
     public class CountryDTO
     {
-        public string? PhoneCode { get; set; }
-        public string? CountryName { get; set; } 
+        public string PhoneCode { get; set; }
+        public string CountryName { get; set; }
     }
 }

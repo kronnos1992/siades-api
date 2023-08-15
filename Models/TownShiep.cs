@@ -8,8 +8,8 @@ namespace siades.Models
         {
             AddressesList = new HashSet<Address>();
         }
-        public string? TownName { get; set; }
-        public Province? GetProvince { get; set; }
-        public ICollection<Address>? AddressesList { get; set; }
+        public string TownName { get; set; }
+        public Province GetProvince { get; set; }
+        public ICollection<Address> AddressesList { get; set; }
     }
 }

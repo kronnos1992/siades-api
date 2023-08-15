@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using siades.Models;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
 
@@ -25,17 +20,17 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> AddNewRequest([FromBody] RequestDTO entity, int bloodId, int hospitalId, int donorId)
         {
             try
             {
                 await repository.CreateRequest(entity, donorId, hospitalId, bloodId);
-                return Created("", $"{entity}");
+                return Ok($"{entity} registrado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
@@ -43,19 +38,27 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<BloodRequest>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var blood = repository.ShowRequests();
-            if (blood == null)
+            try
             {
-                return NotFound();
+                var blood = await repository.ShowRequests();
+                if (blood == null)
+                {
+                    return NotFound("Nenhum registro encontrado");
+                }
+                return Ok(blood);
             }
-            return Ok(blood);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -64,35 +67,35 @@ namespace siades.Controllers
                 var blood = await repository.ShowRequest(id);
                 if (blood == null)
                 {
-                    return NotFound();
+                    return NotFound("Nenhum registro encontrado");
                 }
                 return Ok(blood);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] RequestDTO entity, int id)
         {
             try
             {
                 await repository.UpdateRequest(entity, id);
-                return NoContent();
+                return Ok("Registro atualizado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpDelete]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -102,18 +105,31 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [Route("aprove")]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> AproveRequest(int id)
         {
-            await repository.AproveRequest(id);
-            return NoContent();
+            try
+            {
+                var request = repository.AproveRequest(id);
+                if (request == null)
+                {
+                    return NotFound($"Pedido nº {id} não existe");
+                }
+                await Task.CompletedTask;
+                return Ok($"Pedido nº {id} aprovado com sucesso");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
     }
 }

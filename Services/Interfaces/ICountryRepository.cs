@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using siades.Models;
-using siades.Services.DTOs.BloodDTO;
+using siades.Services.DTOs;
 
 namespace siades.Services.Interfaces
 {

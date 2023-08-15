@@ -13,6 +13,7 @@ namespace siades.Services.Interfaces
         Task<IEnumerable<Donation>> List();
         Task<IEnumerable<Donation>> List(string donor);
         public Task<IEnumerable<Donation>> ListByDonor(int donorId);
+        public Task<IEnumerable<StockHold>> VieStock();
         Task<string> Delete(int id);
     }
 }

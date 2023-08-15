@@ -88,6 +88,7 @@ namespace siades.Services.Repositories
         
         public async Task<UserDTO> GetUserAsync(UserDTO userDTO)
         {
+            await Task.CompletedTask;
             return userDTO;
         }
         public async Task<AuthenticationResult> LoginAsync(UserLoginDTO userDTO)
@@ -146,7 +147,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        private async Task<string> GenerateToken(IdentityUser? user)
+        private async Task<string> GenerateToken(IdentityUser user)
         {
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),

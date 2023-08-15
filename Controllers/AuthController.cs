@@ -17,21 +17,33 @@ namespace siades.Controllers
         }
 
         [HttpPost("signup")]
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> SignUp(UserDTO userDTO)
         {
             try
             {
                 var user = await authRepository.RegisterAsync(userDTO);
-                return Ok(userDTO);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+                return Ok($"Usuario {user} adicionado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Houve erro no cadastro, por favor tente novamente {ex.Message}");
             }
         }
         [HttpPost("login")]
         [AllowAnonymous]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Login(UserLoginDTO userDTO)
         {
             try
@@ -39,18 +51,22 @@ namespace siades.Controllers
                 var login =await authRepository.LoginAsync(userDTO);
                 if (login == null)
                 {
-                    return Unauthorized();
+                    return NotFound($"Usuario {userDTO}, não encontrado. ");
                 }
                 return Ok(login);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Houve erro ao fazer login, por favor tente novamente {ex.Message}");
             };
         }
         
         [HttpPost("role")]
-        [Authorize(Roles ="Admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(200)]
+        //[Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreateRoleAsync(string name)
         {
             try
@@ -60,7 +76,7 @@ namespace siades.Controllers
                 {
                     return Unauthorized();
                 }
-                return Created("",role);
+                return Ok($"Role {role} adicionada com sucesso");
             }
             catch (Exception ex)
             {
@@ -68,21 +84,25 @@ namespace siades.Controllers
             };
         }
         [HttpPost("roleusers")]
-        [Authorize(Roles ="Admin")]
-        public async Task<IActionResult> SignRolesToUsers(string value1, string value2)
+        //[Authorize(Roles ="Admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> SignRolesToUsers(string userId, string roleName)
         {
             try
             {
-                var role =await authRepository.AssignRoleToUser(value1,value2);
+                var role =await authRepository.AssignRoleToUser(userId,roleName);
                 if (role == null)
                 {
                     return Unauthorized();
                 }
-                return Created("",role);
+                return Ok($"permissão {roleName} atribuida com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Ocorreu um erro, por favor tente novamente {ex.Message}");
             };
         }
     

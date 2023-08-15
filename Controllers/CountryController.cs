@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using siades.Models;
-using siades.Services.DTOs.BloodDTO;
+using siades.Services.DTOs;
 using siades.Services.Interfaces;
 
 namespace siades.Controllers
@@ -24,8 +19,8 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
-        public async Task<IActionResult> AddNewBlood([FromBody] CountryDTO entity)
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> AddNewCounty([FromBody] CountryDTO entity)
         {
             try
             {
@@ -34,48 +29,57 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var blood = await repository.GetValues();
-            if (blood == null)
+            try
             {
-                return NotFound();
+                var County = await repository.GetValues();
+                if (County == null)
+                {
+                    return NotFound();
+                }
+                return Ok(County);
             }
-            return Ok(blood);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
-                var blood = await repository.GetValue(id);
-                if (blood == null)
+                var County = await repository.GetValue(id);
+                if (County == null)
                 {
                     return NotFound();
                 }
-                return Ok(blood);
+                return Ok(County);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] CountryDTO entity, int id)
         {
             try
@@ -85,13 +89,13 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpDelete]
         [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -101,7 +105,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 

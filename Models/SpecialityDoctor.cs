@@ -6,7 +6,7 @@ namespace siades.Models
     {
         public int DoctorId { get; set; }
         public int SpecialityId { get; set; }
-        public Doctor? GetDoctor { get; set; }
-        public Speciality? GetSpeciality { get; set; }
+        public Doctor GetDoctor { get; set; }
+        public Speciality GetSpeciality { get; set; }
     }
 }

@@ -35,26 +35,35 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var provinces = await repository.GetValues();
-            if (provinces == null)
+            try
             {
-                return NotFound();
+                var provinces = await repository.GetValues();
+                if (provinces == null)
+                {
+                    return NotFound("Nenhum registro encontrado");
+                }
+                return Ok(provinces);
             }
-            return Ok(provinces);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
+        [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
@@ -64,29 +73,29 @@ namespace siades.Controllers
                 var Province = await repository.GetValue(id);
                 if (Province == null)
                 {
-                    return NotFound();
+                    return NotFound("Nenhum registro encontrado");
                 }
                 return Ok(Province);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] ProvinceDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return Created("", entity.ProvinceName);
+                return Ok($"provincia {entity.ProvinceName} atualizada com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
@@ -102,7 +111,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 

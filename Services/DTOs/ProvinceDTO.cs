@@ -7,7 +7,7 @@ namespace siades.Services.DTOs
 {
     public class ProvinceDTO
     {
-        public string? ProvinceName { get; set; }
-        public string? GeoLocation { get; set; }
+        public string ProvinceName { get; set; }
+        public string GeoLocation { get; set; }
     }
 }

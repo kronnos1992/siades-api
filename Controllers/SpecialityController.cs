@@ -21,37 +21,46 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> AddSpeciality([FromBody] SpecialityDTO entity)
         {
             try
             {
                 await repository.NewSpeciality(entity);
-                return Created("", entity);
+                return Ok($"{entity} adicionado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var speciality = await repository.GetValues();
-            if (speciality == null)
+            try
             {
-                return NotFound();
+                var speciality = await repository.GetValues();
+                if (speciality == null)
+                {
+                    return NotFound("Nenhum registro encontrado ");
+                }
+                return Ok(speciality);
             }
-            return Ok(speciality);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -60,35 +69,35 @@ namespace siades.Controllers
                 var speciality = await repository.GetValue(id);
                 if (speciality == null)
                 {
-                    return NotFound();
+                    return NotFound("Nenhum registro encontrado ");
                 }
                 return Ok(speciality);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] SpecialityDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return Created("registro atualizado", entity);
+                return Ok($"registro atualizado {entity}");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpDelete]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -98,7 +107,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
     }

@@ -14,21 +14,21 @@ namespace siades.Database.DataContext
 
         }
 
-        public DbSet<Address>? Tb_Address { get; set; }
-        public DbSet<Person>? Tb_Person { get; set; }
-        public DbSet<Contact>? Tb_Contact { get; set; }
-        public DbSet<Province>? Tb_Province { get; set; }
-        public DbSet<Country>? Tb_Country { get; set; }
-        public DbSet<Doctor>? Tb_Doctor { get; set; }
-        public DbSet<Donor>? Tb_Donor { get; set; }
-        public DbSet<Hospital>? Tb_Hospital { get; set; }
-        public DbSet<BloodRequest>? Tb_BloodRequest { get; set; }
-        public DbSet<Blood>? Tb_Blood { get; set; }
-        public DbSet<StockHold>? Tb_StockHold { get; set; }
-        public DbSet<TownShiep>? Tb_TownShiep { get; set; }
-        public DbSet<Speciality>? Tb_Speciality { get; set; }
-        public DbSet<SpecialityDoctor>? Tb_DocSpeciality { get; set; }
-        public DbSet<Donation>? Tb_Donation { get; set; }
+        public DbSet<Address> Tb_Address { get; set; }
+        public DbSet<Person> Tb_Person { get; set; }
+        public DbSet<Contact> Tb_Contact { get; set; }
+        public DbSet<Province> Tb_Province { get; set; }
+        public DbSet<Country> Tb_Country { get; set; }
+        public DbSet<Doctor> Tb_Doctor { get; set; }
+        public DbSet<Donor> Tb_Donor { get; set; }
+        public DbSet<Hospital> Tb_Hospital { get; set; }
+        public DbSet<BloodRequest> Tb_BloodRequest { get; set; }
+        public DbSet<Blood> Tb_Blood { get; set; }
+        public DbSet<StockHold> Tb_StockHold { get; set; }
+        public DbSet<TownShiep> Tb_TownShiep { get; set; }
+        public DbSet<Speciality> Tb_Speciality { get; set; }
+        public DbSet<SpecialityDoctor> Tb_DocSpeciality { get; set; }
+        public DbSet<Donation> Tb_Donation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

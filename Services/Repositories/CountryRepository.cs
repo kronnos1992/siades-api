@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
-using siades.Services.DTOs.BloodDTO;
+using siades.Services.DTOs;
 using siades.Services.Interfaces;
 
 namespace siades.Services.Repositories

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
@@ -11,7 +7,7 @@ namespace siades.Services.Repositories
 {
     public class DonationRepository : IDonationRepository
     {
-        private readonly SiadesDbContext? dbContext;
+        private readonly SiadesDbContext dbContext;
         private string message;
 
         public DonationRepository(SiadesDbContext dbContext)
@@ -28,33 +24,40 @@ namespace siades.Services.Repositories
                 {
                     if (person.Age >= 18)
                     {
-                        if (donor.IsElegilbe == true)
+                        if (donor.NextGivenDate < DateTime.Now)
                         {
-                            donor.LastGivenDate = DateTime.Now;
-                            donor.NextGivenDate = DateTime.Now.AddMonths(3);
-                            donor.RemaingDays = donor.NextGivenDate.Day - DateTime.Now.Day;
-
-
-                            var donation = new Donation
+                            if (donor.IsElegilbe == true)
                             {
-                                BloodGroup = donor.BloodGroupName,
-                                CreatedAt = DateTime.Now,
-                                Qty = 1,
-                                DonorId = donor.Id,
-                            };
+                                donor.LastGivenDate = DateTime.Now;
+                                donor.NextGivenDate = DateTime.Now.AddMonths(3);
+                                donor.RemaingDays = donor.NextGivenDate.Day - DateTime.Now.Day;
 
-                            var foundInStock = dbContext.Tb_StockHold
-                                .SingleOrDefault(x => x.StockHoldId == donor.BloodGroupName);
-                            foundInStock.Qty += 1;
 
-                            await dbContext.AddRangeAsync(donation);
-                            dbContext.UpdateRange(donor, foundInStock);
-                            await dbContext.SaveChangesAsync();
-                            return message = "doação registrada com sucesso!";
+                                var donation = new Donation
+                                {
+                                    BloodGroup = donor.BloodGroupName,
+                                    CreatedAt = DateTime.Now,
+                                    Qty = 1,
+                                    DonorId = donor.Id,
+                                };
+
+                                var foundInStock = dbContext.Tb_StockHold
+                                    .SingleOrDefault(x => x.StockHoldId == donor.BloodGroupName);
+                                foundInStock.Qty += 1;
+
+                                await dbContext.AddRangeAsync(donation);
+                                dbContext.UpdateRange(donor, foundInStock);
+                                await dbContext.SaveChangesAsync();
+                                return message = "doação registrada com sucesso!";
+                            }
+                            else
+                            {
+                                return message = "Doador não aprovado para doação. ";
+                            }
                         }
                         else
                         {
-                            return message = "Doador não aprovado para doação. ";
+                            return message = $"Faltam {donor.RemaingDays} dias para voltar a doar. ";
                         }
                     }
                     else
@@ -67,10 +70,9 @@ namespace siades.Services.Repositories
                     return message = "Doador não encontrado.";
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-
-                throw;
+                return message = $"{ex.Message}";
             }
         }
 
@@ -78,7 +80,7 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var donation = dbContext.Tb_Donation.SingleOrDefaultAsync(x => x.Id == id);
+                var donation = await dbContext.Tb_Donation.SingleOrDefaultAsync(x => x.Id == id);
                 if (donation != null)
                 {
                     dbContext.Remove(donation);
@@ -92,7 +94,6 @@ namespace siades.Services.Repositories
                 throw new Exception(message);
             }
         }
-
         public async Task<Donation> List(int id)
         {
             try
@@ -110,7 +111,6 @@ namespace siades.Services.Repositories
                 throw new Exception(message);
             }
         }
-
         public async Task<IEnumerable<Donation>> List()
         {
             try
@@ -127,7 +127,6 @@ namespace siades.Services.Repositories
                 throw new Exception(message);
             }
         }
-
         public async Task<IEnumerable<Donation>> List(string blood)
         {
             try
@@ -164,5 +163,18 @@ namespace siades.Services.Repositories
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<IEnumerable<StockHold>> VieStock()
+        {
+            try
+            {
+                return await dbContext.Tb_StockHold.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro, {ex.Message}");
+            }
+        }
+
+
     }
 }

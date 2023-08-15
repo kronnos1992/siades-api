@@ -26,37 +26,46 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> AddTownShiep([FromBody] TownShiepDTO entity, int provinceId)
         {
             try
             {
                 await repository.NewTownShiep(entity, provinceId);
-                return Created("", entity);
+                return Ok($"{entity} adicionado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public ActionResult<IEnumerable<TownShiep>> GetAllAsync()
         {
-            var TownShiep = repository.GetValues();
-            if (TownShiep == null)
+            try
             {
-                return NotFound();
+                var TownShiep = repository.GetValues();
+                if (TownShiep == null)
+                {
+                    return NotFound("Nenhum registro encontrado");
+                }
+                return Ok(TownShiep);
             }
-            return Ok(TownShiep);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -65,35 +74,35 @@ namespace siades.Controllers
                 var TownShiep = await repository.GetValue(id);
                 if (TownShiep == null)
                 {
-                    return NotFound();
+                    return NotFound("Nenhum registro encontrado");
                 }
                 return Ok(TownShiep);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] TownShiepDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return NoContent();
+                return Ok("registro atualizado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpDelete]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -103,7 +112,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 

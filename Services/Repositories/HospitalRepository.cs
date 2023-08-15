@@ -53,7 +53,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        public async Task<IEnumerable<Hospital>?> GetValues()
+        public async Task<IEnumerable<Hospital>> GetValues()
         {
             try
             {

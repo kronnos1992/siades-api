@@ -8,9 +8,9 @@ public class Address : EntityDefault
     {
         People = new HashSet<Person>();
     }
-    public string? Street { get; set; }
-    public string? HouseNumber { get; set; }
-    public string? NeighborHud { get; set; }
-    public TownShiep? GetTownShiep { get; set; }
+    public string Street { get; set; }
+    public string HouseNumber { get; set; }
+    public string NeighborHud { get; set; }
+    public TownShiep GetTownShiep { get; set; }
     public ICollection<Person> People { get; set; }
 }

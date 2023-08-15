@@ -25,37 +25,46 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> AddNewDonor([FromBody] DonorDTO entity, int bloodId, int townId)
         {
             try
             {
                 await repository.NewDonor(entity, bloodId, townId);
-                return Ok();
+                return Ok($"Dador {entity} inserido com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<Donor>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var donor = repository.GetValues();
-            if (donor == null)
+            try
             {
-                return NotFound();
+               var donor = await repository.GetValues();
+                if (donor == null)
+                {
+                    return NotFound("Nenhum registro encontrado");
+                }
+                return Ok(donor); 
             }
-            return Ok(donor);
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -64,29 +73,29 @@ namespace siades.Controllers
                 var donor = await repository.GetValue(id);
                 if (donor == null)
                 {
-                    return NotFound();
+                    return NotFound($"dador não encontrado");
                 }
                 return Ok(donor);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
         [HttpPut]
         [ProducesResponseType(404)]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] DonorDTO entity, int id)
         {
             try
             {
                 await repository.Update(entity, id);
-                return NoContent();
+                return Ok("Registro atualizado ");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
 
@@ -102,7 +111,7 @@ namespace siades.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
             }
         }
     }
