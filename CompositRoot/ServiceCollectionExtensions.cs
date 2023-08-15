@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using Serilog;
 using siades.Database.DataContext;
 using siades.Services.Interfaces;
 using siades.Services.Mapping;
@@ -35,13 +37,14 @@ public static class ServiceCollectionExtensions
     }
     public static WebApplicationBuilder AddControllersConfig(this WebApplicationBuilder builder)
     {
-        builder.Services.AddControllers(op =>{
+        builder.Services.AddControllers
+        (op =>{
             //politica de autenticação
             var policy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             .Build();
             op.Filters.Add(new AuthorizeFilter(policy));
-        }) 
+        })
         //politica de controlo de loops e serialização
             .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling
@@ -99,7 +102,7 @@ public static class ServiceCollectionExtensions
                 ValidateTokenReplay = true,
 
                 
-                //ClockSkew = TimeSpan.Zero,
+                ClockSkew = TimeSpan.Zero,
                 //SaveSigninToken = true
 
             };
@@ -119,6 +122,7 @@ public static class ServiceCollectionExtensions
         });
         return builder;
     }
+
     // configurar o swagger para receber tokens no header 
     public static IServiceCollection AddSwagger(this IServiceCollection _services)
     {
@@ -127,7 +131,7 @@ public static class ServiceCollectionExtensions
         {
             s.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "claver-api",
+                Title = "siades-api",
                 Version = "v1.0",
                 TermsOfService = new Uri("https://example.com/terms"),
                 Contact = new OpenApiContact
@@ -203,8 +207,11 @@ public static class ServiceCollectionExtensions
     {
         //varieable for introduce connection strings
         builder.Services.AddDbContext<SiadesDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
-        );
+            options.UseSqlServer(builder.Configuration.GetConnectionString("production")));
+        ////varieable for introduce connection strings
+        //builder.Services.AddDbContext<SiadesDbContext>(options =>
+        //    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
+        //);
 
         // injectar serviços do automapper
         var mapConfig = new MapperConfiguration( conf => {
@@ -221,12 +228,12 @@ public static class ServiceCollectionExtensions
         builder.Services.AddTransient<ISpecialityRepository, SpecialityRepository>().AddLogging();
         builder.Services.AddTransient<IHospitalRepository, HospitalRepository>().AddLogging();
 
-        builder.Services.AddTransient<IDoctoRepository, DoctoRepository>();
-        builder.Services.AddTransient<IDonoRepository, DonoRepository>();
-        builder.Services.AddTransient<IDonationRepository, DonationRepository>();
-        builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+        builder.Services.AddTransient<IDoctoRepository, DoctoRepository>().AddLogging();;
+        builder.Services.AddTransient<IDonoRepository, DonoRepository>().AddLogging();;
+        builder.Services.AddTransient<IDonationRepository, DonationRepository>().AddLogging();;
+        builder.Services.AddScoped<IAuthRepository, AuthRepository>().AddLogging();;
 
-        builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+        builder.Services.AddScoped<IRequestRepository, RequestRepository>().AddLogging();;
 
         return builder;
     }

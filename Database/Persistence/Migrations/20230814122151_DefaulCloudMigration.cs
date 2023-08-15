@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace siades.Database.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class DefaulMigration : Migration
+    public partial class DefaulCloudMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

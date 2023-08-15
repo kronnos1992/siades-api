@@ -16,5 +16,7 @@ namespace siades.Services.DTOs
         public string? FullName { get; set; }
         public string? IdNumber { get; set; }
         public string? TypeDocId { get; set; }
+        public string? Nationality { get; set; }
+        public string? PlaceOfBirth { get; set; }
     }
 }

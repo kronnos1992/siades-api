@@ -25,10 +25,7 @@ internal class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseAppSwaggerRoutes();
-        }
+        app.UseAppSwaggerRoutes();
 
         // iapplication services from compositroot
         app.UseAppCors();

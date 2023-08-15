@@ -12,8 +12,8 @@ using siades.Database.DataContext;
 namespace siades.Database.Persistence.Migrations
 {
     [DbContext(typeof(SiadesDbContext))]
-    [Migration("20230814093339_DefaulMigration")]
-    partial class DefaulMigration
+    [Migration("20230814122151_DefaulCloudMigration")]
+    partial class DefaulCloudMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

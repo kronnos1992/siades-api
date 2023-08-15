@@ -17,7 +17,7 @@ namespace siades.Controllers
         }
 
         [HttpPost("signup")]
-        [AllowAnonymous]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> SignUp(UserDTO userDTO)
         {
             try
@@ -50,7 +50,7 @@ namespace siades.Controllers
         }
         
         [HttpPost("role")]
-        [AllowAnonymous]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreateRoleAsync(string name)
         {
             try
@@ -68,7 +68,7 @@ namespace siades.Controllers
             };
         }
         [HttpPost("roleusers")]
-        [AllowAnonymous]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> SignRolesToUsers(string value1, string value2)
         {
             try
