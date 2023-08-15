@@ -4,28 +4,88 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
-using siades.Models.IdentityModels;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
+using AuthenticationResult = siades.Services.DTOs.AuthenticationResult;
 
 namespace siades.Services.Repositories
 {
     public class AuthRepository : IAuthRepository
     {
         private readonly IConfiguration configuration;
-        private readonly UserManager<Users> userManager;
-        private readonly SignInManager<Users> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly SignInManager<IdentityUser> signInManager;
         private readonly IMapper mapper;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        public AuthRepository( IConfiguration configuration, UserManager<Users> userManager, SignInManager<Users> signInManager,IMapper mapper)
+        public AuthRepository( 
+            IConfiguration configuration, 
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager,
+            RoleManager<IdentityRole> roleManager, 
+            IMapper mapper
+        )
         {
+
             this.configuration = configuration;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.mapper = mapper;
+            this.roleManager = roleManager;
         }
 
+        public async Task<string> CreateRoleAsync(string roleName)
+        {
+            try
+            {
+                var findRole = await roleManager.RoleExistsAsync(roleName);
+                if (!findRole)
+                {
+                    var role = await roleManager.CreateAsync(new IdentityRole(roleName));
+                    if (role.Succeeded)
+                    {
+                        return role.Succeeded.ToString();
+                    }
+                    else
+                    {
+                        return role.Errors.ToString();
+                    }
+                }
+                return "A role inserida ja existe";         
+            }
+            catch (System.Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        public async Task<string> AssignRoleToUser(string userId, string roleName)
+        {
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return "nenhum usuario encontrado";
+                }
+
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    return "role não encontrada";
+                }
+
+                var result = await userManager.AddToRoleAsync(user, roleName);
+                return result.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+        
         public async Task<UserDTO> GetUserAsync(UserDTO userDTO)
         {
             return userDTO;
@@ -70,7 +130,7 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var user = mapper.Map<Users>(userDTO);
+                var user = mapper.Map<IdentityUser>(userDTO);
                 var userMaped = await userManager.CreateAsync(user, userDTO.Password);
                 var output = mapper.Map<UserDTO>(user);
 
@@ -86,7 +146,7 @@ namespace siades.Services.Repositories
             }
         }
 
-        private async Task<string> GenerateToken(Users? user)
+        private async Task<string> GenerateToken(IdentityUser? user)
         {
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -111,6 +171,6 @@ namespace siades.Services.Repositories
 
             return tokenHandler.WriteToken(token);
         }  
-                
+            
     }
 }

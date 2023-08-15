@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using siades.Models.IdentityModels;
 using siades.Services.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using siades.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace siades.Controllers
 {
@@ -22,28 +16,21 @@ namespace siades.Controllers
             this.authRepository = authRepository;
         }
 
-        [HttpGet("GetUser")]
-        public async Task<IActionResult> GetUSer(UserDTO userDTO)
-        {
-            await authRepository.GetUserAsync(userDTO);
-            return Ok();
-        }
-
-        [HttpPost("SignUp")]
-        [AllowAnonymous]
+        [HttpPost("signup")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> SignUp(UserDTO userDTO)
         {
             try
             {
                 var user = await authRepository.RegisterAsync(userDTO);
-                return Created("api/auth/signup", userDTO);
+                return Ok(userDTO);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("Login")]
+        [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDTO userDTO)
         {
@@ -61,5 +48,43 @@ namespace siades.Controllers
                 return BadRequest(ex);
             };
         }
+        
+        [HttpPost("role")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> CreateRoleAsync(string name)
+        {
+            try
+            {
+                var role =await authRepository.CreateRoleAsync(name);
+                if (role == null)
+                {
+                    return Unauthorized();
+                }
+                return Created("",role);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            };
+        }
+        [HttpPost("roleusers")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> SignRolesToUsers(string value1, string value2)
+        {
+            try
+            {
+                var role =await authRepository.AssignRoleToUser(value1,value2);
+                if (role == null)
+                {
+                    return Unauthorized();
+                }
+                return Created("",role);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            };
+        }
+    
     }
 }

@@ -13,6 +13,8 @@ public class Person : EntityDefault
     public string? TypeIdentNumber { get; set; }
     public DateTime BirthDate { get; set; }
     public int Age { get; set; }
+    public string Nationality { get; set; }
+    public string PlaceOfBirth { get; set; }
 
     //relacionamentos
     public Contact? GetContact { get; set; }

@@ -7,14 +7,7 @@ public static class ApplicationBuilderExtensions
     public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder app,
     IWebHostEnvironment environment)
     {
-        if (environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-        else
-        {
-            app.UseHsts();
-        }
+        app.UseDeveloperExceptionPage();
         return app;
     }
     // servicos para usar o cors

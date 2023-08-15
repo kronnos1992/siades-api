@@ -10,12 +10,14 @@ internal class Program
         // Add services to the container.
         // webapplication services drom compositroot
         builder.AddControllersConfig();
-        builder.AddUSerConfigurations();
+        
         builder.AddSwaggerConfig();
         builder.AddDataProtectionConfig();
         builder.AddConfigurationConfig();
-        builder.AddAuthenticationConfig();
+        
         builder.AddPersistence();
+        builder.AddUSerConfigurations();
+        builder.AddAuthenticationConfig();
         
         builder.Services.AddCors();
         builder.Services.AddEndpointsApiExplorer();
@@ -23,10 +25,7 @@ internal class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseAppSwaggerRoutes();
-        }
+        app.UseAppSwaggerRoutes();
 
         // iapplication services from compositroot
         app.UseAppCors();
@@ -34,9 +33,7 @@ internal class Program
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
-        app.UseAuthorization();
-
-        //app.UseMvc()
+        //app.UseAuthorization();
 
         app.MapControllers();
         //.RequireAuthorization(args);
