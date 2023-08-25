@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using siades.Models;
 using siades.Services.DTOs;
@@ -7,7 +8,7 @@ namespace siades.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Serializable]
+[Authorize(Roles = "Admin, Tecnico")]
 public class BloodController : ControllerBase
 {
     private readonly ILogger<BloodController> _logger;
@@ -22,18 +23,24 @@ public class BloodController : ControllerBase
     [HttpPost]
     [Produces("application/json")]
     [ProducesResponseType(400)]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(201)]
     [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> AddNewBlood([FromBody] BloodDTo entity)
     {
         try
         {
-            await repository.NewBlood(entity);
-            return Ok($"Grupo: {entity.Name} inserido com sucesso");
+            if (ModelState.IsValid)
+            {
+                await repository.NewBlood(entity);
+                return Created("", "REgistro inserido com sucesso.");
+            }
+            return BadRequest("Houve erro no cadastro, por favor tente novamente ");
         }
         catch (Exception ex)
         {
-            return BadRequest($"Houve erro no cadastro, por favor tente novamente {ex.Message}");
+            return StatusCode(500, $"Erro interno, {ex.Message}");
         }
     }
 
@@ -42,14 +49,16 @@ public class BloodController : ControllerBase
     [ProducesResponseType(404)]
     [ProducesResponseType(400)]
     [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     public async Task<IActionResult> GetAllAsync()
     {
         try
         {
             var blood = await repository.GetValues();
-            if (blood == null)
+            if (blood == null || blood.ToArray().Length < 0)
             {
-                return NotFound($"grupo {blood} não encontrado");
+                return NotFound($"Nenhum registro encontrado");
             }
             return Ok(blood);
         }
@@ -64,6 +73,8 @@ public class BloodController : ControllerBase
     [ProducesResponseType(404)]
     [ProducesResponseType(400)]
     [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     public async Task<IActionResult> GetAsync(int id)
     {
         try

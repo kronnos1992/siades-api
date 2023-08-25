@@ -45,11 +45,11 @@ namespace siades.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
-        public ActionResult<IEnumerable<TownShiep>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
-                var TownShiep = repository.GetValues();
+                var TownShiep = await repository.GetValues();
                 if (TownShiep == null)
                 {
                     return NotFound("Nenhum registro encontrado");

@@ -10,7 +10,8 @@ namespace siades.Services.DTOs
     {
         public bool Success { get; set; }
         public string Token { get; set; }
-        public UserLoginDTO User { get; set; }
+        public string FullUserName { get; set; }
         public string ErrorMessage { get; set; }
+        public string SuccessMessage { get; set; }
     }
 }

@@ -19,23 +19,30 @@ namespace siades.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> AddNewCounty([FromBody] CountryDTO entity)
         {
             try
             {
                 await repository.NewCountry(entity);
-                return Ok($"{entity.CountryName}, Adicionado com sucesso");
+                if (ModelState.IsValid)
+                {
+                    return CreatedAtAction("AddNewCounty", $"{entity.CountryName} Adicionado com sucesso");
+                }
+                return BadRequest($"Erro, por favor tente novamente");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+                return StatusCode(500, $"Erro de servidor, {ex.Message}");
             }
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
@@ -58,6 +65,7 @@ namespace siades.Controllers
         [HttpGet]
         [Route("getone")]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
@@ -79,6 +87,7 @@ namespace siades.Controllers
 
         [HttpPut]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] CountryDTO entity, int id)
         {

@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using siades.Database.DataContext;
+using siades.Models.Auth;
 using siades.Services.Interfaces;
 using siades.Services.Mapping;
 using siades.Services.Repositories;
@@ -103,7 +104,7 @@ public static class ServiceCollectionExtensions
 
                 
                 ClockSkew = TimeSpan.Zero,
-                //SaveSigninToken = true
+                SaveSigninToken = true
 
             };
             p.AutomaticRefreshInterval = TimeSpan.FromSeconds(10);
@@ -180,9 +181,9 @@ public static class ServiceCollectionExtensions
     public static IdentityBuilder UserValidations(this IServiceCollection services)
     {
         //politica de senhas
-        //services.AddIdentity<IdentityUser, IdentityRole>()
+        //services.AddIdentity<AppUser, AppRole>()
         //    .AddEntityFrameworkStores<SiadesDbContext>();
-        IdentityBuilder builder = services.AddIdentityCore<IdentityUser>(o =>
+        IdentityBuilder builder = services.AddIdentityCore<AppUser>(o =>
         {
             o.Password.RequireDigit = false;
             o.Password.RequireNonAlphanumeric = false;
@@ -190,15 +191,13 @@ public static class ServiceCollectionExtensions
             o.Password.RequireUppercase = false;
             o.Password.RequiredLength = 4;
             //o.Password.RequiredUniqueChars = 3;
-
-            
-        });
+        }).AddRoles<AppRole>();
         //politica de roles e usuarios
-        builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+        builder = new IdentityBuilder(builder.UserType, typeof(AppRole), services);
         builder.AddEntityFrameworkStores<SiadesDbContext>();
-        builder.AddRoleValidator<RoleValidator<IdentityRole>>();
-        builder.AddRoleManager<RoleManager<IdentityRole>>();
-        builder.AddSignInManager<SignInManager<IdentityUser>>();
+        builder.AddRoleValidator<RoleValidator<AppRole>>();
+        builder.AddRoleManager<RoleManager<AppRole>>();
+        builder.AddSignInManager<SignInManager<AppUser>>();
 
         return builder;
     }
@@ -206,12 +205,13 @@ public static class ServiceCollectionExtensions
     public static WebApplicationBuilder AddPersistence(this WebApplicationBuilder builder)
     {
         //varieable for introduce connection strings
-        builder.Services.AddDbContext<SiadesDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("production")));
-        ////varieable for introduce connection strings
         //builder.Services.AddDbContext<SiadesDbContext>(options =>
-        //    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
-        //);
+        //    options.UseSqlServer(builder.Configuration.GetConnectionString("production")));
+
+        //varieable for introduce connection strings
+        builder.Services.AddDbContext<SiadesDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
+        );
 
         // injectar serviços do automapper
         var mapConfig = new MapperConfiguration( conf => {

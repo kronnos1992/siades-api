@@ -10,15 +10,13 @@ internal class Program
         // Add services to the container.
         // webapplication services drom compositroot
         builder.AddControllersConfig();
-        
         builder.AddSwaggerConfig();
         builder.AddDataProtectionConfig();
         builder.AddConfigurationConfig();
-        
         builder.AddPersistence();
         builder.AddUSerConfigurations();
         builder.AddAuthenticationConfig();
-        
+
         builder.Services.AddCors();
         builder.Services.AddEndpointsApiExplorer();
 
@@ -33,10 +31,9 @@ internal class Program
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
-        //app.UseAuthorization();
+        app.UseAuthorization();
 
         app.MapControllers();
-        //.RequireAuthorization(args);
 
         app.Run();
     }

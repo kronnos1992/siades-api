@@ -54,7 +54,7 @@ namespace siades.Services.Repositories
 
                 var newAdd = new Country
                 {
-                    PhoneCode = entity.PhoneCode.ToUpper(),
+                    PhoneCode = entity.CountryCode.ToUpper(),
                     CountryName = entity.CountryName.ToUpper(),
                     CreatedAt = DateTime.Now
                 };
@@ -76,7 +76,7 @@ namespace siades.Services.Repositories
                 if (country != null || country.Id != Id)
                 {
                     country.CountryName = entity.CountryName.ToUpper();
-                    country.PhoneCode = entity.PhoneCode.ToUpper();
+                    country.PhoneCode = entity.CountryCode.ToUpper();
                     country.UpdatedAt = DateTime.UtcNow;
 
                     await dbcontext.SaveChangesAsync();

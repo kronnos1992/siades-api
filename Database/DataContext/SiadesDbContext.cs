@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.Configurations;
 using siades.Models;
-
+using siades.Models.Auth;
 
 namespace siades.Database.DataContext
 {
 
-    public class SiadesDbContext : IdentityDbContext
+    public class SiadesDbContext : IdentityDbContext<AppUser, AppRole, int,
+        IdentityUserClaim<int>, AppRoleToUser, IdentityUserLogin<int>,
+        IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public SiadesDbContext(DbContextOptions<SiadesDbContext> options) : base(options)
         {
@@ -46,8 +49,9 @@ namespace siades.Database.DataContext
             modelBuilder.ApplyConfiguration(new SpecialityConfigurations());
             modelBuilder.ApplyConfiguration(new StockHoldConfigurations());
             modelBuilder.ApplyConfiguration(new TownShiepConfigurations());
+            modelBuilder.ApplyConfiguration(new AuthConfigurations());
 
-            
+
 
             base.OnModelCreating(modelBuilder);
         }

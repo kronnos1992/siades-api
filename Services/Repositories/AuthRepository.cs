@@ -5,8 +5,8 @@ using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using siades.Models.Auth;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
 using AuthenticationResult = siades.Services.DTOs.AuthenticationResult;
@@ -16,16 +16,16 @@ namespace siades.Services.Repositories
     public class AuthRepository : IAuthRepository
     {
         private readonly IConfiguration configuration;
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<AppUser> userManager;
+        private readonly SignInManager<AppUser> signInManager;
         private readonly IMapper mapper;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<AppRole> roleManager;
 
-        public AuthRepository( 
-            IConfiguration configuration, 
-            UserManager<IdentityUser> userManager, 
-            SignInManager<IdentityUser> signInManager,
-            RoleManager<IdentityRole> roleManager, 
+        public AuthRepository(
+            IConfiguration configuration,
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            RoleManager<AppRole> roleManager,
             IMapper mapper
         )
         {
@@ -41,20 +41,15 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var findRole = await roleManager.RoleExistsAsync(roleName);
-                if (!findRole)
+                var role = await roleManager.CreateAsync(new AppRole(roleName));
+                if (role.Succeeded)
                 {
-                    var role = await roleManager.CreateAsync(new IdentityRole(roleName));
-                    if (role.Succeeded)
-                    {
-                        return role.Succeeded.ToString();
-                    }
-                    else
-                    {
-                        return role.Errors.ToString();
-                    }
+                    return role.Succeeded.ToString();
                 }
-                return "A role inserida ja existe";         
+                else
+                {
+                    return role.Errors.ToString();
+                }
             }
             catch (System.Exception ex)
             {
@@ -68,7 +63,7 @@ namespace siades.Services.Repositories
             {
                 var user = await userManager.FindByIdAsync(userId);
 
-                if (user == null)
+                if (user == null || user.UserName.ToString().IsNullOrEmpty())
                 {
                     return "nenhum usuario encontrado";
                 }
@@ -117,7 +112,7 @@ namespace siades.Services.Repositories
                     {
                         Success = true,
                         Token = token,
-                        User = returnLogin
+                        SuccessMessage = "Login efeituado com sucesso!"
                     };
                 } 
                 else
@@ -132,7 +127,7 @@ namespace siades.Services.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                throw new Exception("Erro de servidor, consulte o administrador para melhor esclarecimento", ex);
             }
         }
 
@@ -140,7 +135,7 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var user = mapper.Map<IdentityUser>(userDTO);
+                var user = mapper.Map<AppUser>(userDTO);
                 var userMaped = await userManager.CreateAsync(user, userDTO.Password);
                 var output = mapper.Map<UserDTO>(user);
 
@@ -150,13 +145,13 @@ namespace siades.Services.Repositories
                 }
                 throw new Exception($"{userMaped.Errors}");            
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception("", ex);
+                throw new Exception(ex.Message, ex);
             }
         }
 
-        private async Task<string> GenerateToken(IdentityUser user)
+        private async Task<string> GenerateToken(AppUser user)
         {
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -182,14 +177,14 @@ namespace siades.Services.Repositories
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<IEnumerable<IdentityRole>> GetRoles()
+        public async Task<IEnumerable<AppRole>> GetRoles()
         {
             var roles = await roleManager.Roles.ToListAsync()
                 ?? throw new Exception("nenhum registro encontrado. ");
             return roles;
         }
 
-        public async Task<IEnumerable<IdentityUser>> GetUsers()
+        public async Task<IEnumerable<AppUser>> GetUsers()
         {
             try
             {
@@ -201,6 +196,50 @@ namespace siades.Services.Repositories
             {
                 throw new Exception($"Erro de banco de dados", ex);
             }
+        }
+
+        public async Task<bool> DeleteUser(string userId)
+        {
+            var user = await userManager.FindByNameAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            await userManager.DeleteAsync(user);
+            return true;
+        }
+
+        public async Task<bool> DeleteRole(string roleId)
+        {
+            var role = await roleManager.FindByNameAsync(roleId);
+            if (role == null)
+            {
+                return false;
+            }
+            await roleManager.DeleteAsync(role);
+            return true;
+        }
+
+        public async Task<bool> UpdateteUser(string userId)
+        {
+            var user = await userManager.FindByNameAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            await userManager.UpdateAsync(user);
+            return true;
+        }
+
+        public async Task<bool> UpdateteRole(string roleId)
+        {
+            var role = await roleManager.FindByNameAsync(roleId);
+            if (role == null)
+            {
+                return false;
+            }
+            await roleManager.UpdateAsync(role);
+            return true;
         }
     }
 }

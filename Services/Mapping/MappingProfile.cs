@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using siades.Models;
+using siades.Models.Auth;
 using siades.Services.DTOs;
 
 namespace siades.Services.Mapping
@@ -11,8 +12,8 @@ namespace siades.Services.Mapping
         public MappingProfile()
         {
             // auth mapping
-            CreateMap<IdentityUser, UserDTO>().ReverseMap();
-            CreateMap<IdentityUser, UserLoginDTO>().ReverseMap();
+            CreateMap<AppUser, UserDTO>().ReverseMap();
+            CreateMap<AppUser, UserLoginDTO>().ReverseMap();
 
             // blood mapping
             CreateMap<Blood, BloodDTo>().ReverseMap();
