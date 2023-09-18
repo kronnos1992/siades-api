@@ -8,7 +8,7 @@ namespace siades.Services.Interfaces
 {
     public interface IDonationRepository
     {
-        Task<string> CreateDonation(int id);
+        Task CreateDonation(int id);
         Task<Donation> List(int id);
         Task<IEnumerable<Donation>> List();
         Task<IEnumerable<Donation>> List(string donor);

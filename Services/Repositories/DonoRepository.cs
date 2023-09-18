@@ -59,6 +59,7 @@ public class DonoRepository : IDonoRepository
         try
         {
             var donor = await dbContext.Tb_Donor
+                .Include(p => p.GetPerson)
                 .ToListAsync();
 
             if (donor.ToString().Trim().Length > 0)
@@ -126,9 +127,19 @@ public class DonoRepository : IDonoRepository
                         HousePhoneNumber = entity.HousePhoneNumber,
                     },
                     GetBlood = blood,
-                }
 
+                }
             };
+            if (entity.ImgFile != null)
+            {
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(entity.ImgFile.FileName)}";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await entity.ImgFile.CopyToAsync(stream);
+                }
+                donor.GetPerson.ImgDesc = fileName;
+            }
             await dbContext.AddRangeAsync(donor);
             await dbContext.SaveChangesAsync();
         }

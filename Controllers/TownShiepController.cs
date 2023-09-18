@@ -32,7 +32,7 @@ namespace siades.Controllers
             try
             {
                 await repository.NewTownShiep(entity, provinceId);
-                return Ok($"{entity} adicionado com sucesso");
+                return Ok($"{entity.Name} adicionado com sucesso");
             }
             catch (Exception ex)
             {

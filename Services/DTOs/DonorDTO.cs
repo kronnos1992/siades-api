@@ -19,7 +19,7 @@ namespace siades.Services.DTOs.DonorDTO
         public DateTime BirthDate { get; set; }
         public string Nationality { get; set; }
         public string PlaceOfBirth { get; set; }
-        //public int Age { get; set; }
+        public IFormFile ImgFile { get; set; }
 
         // contact
         public string PhoneNumber { get; set; }

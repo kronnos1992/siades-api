@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
@@ -14,65 +15,52 @@ namespace siades.Services.Repositories
         {
             this.dbContext = dbContext;
         }
-        public async Task<string> CreateDonation(int donorId)
+        public async Task CreateDonation(int donorId)
         {
             try
             {
-                var donor = await dbContext.Tb_Donor.SingleOrDefaultAsync(x => x.Id == donorId);
-                var person = await dbContext.Tb_Person.SingleOrDefaultAsync(x => x.Id == donor.Id);
-                if (donor.Id > 0)
+                var donor = await dbContext.Tb_Donor
+                    .Include(x => x.GetPerson)
+                    .SingleOrDefaultAsync(x => x.Id == donorId)
+                        ?? throw new NullReferenceException("Dador não encontrado");
+                var person = await dbContext.Tb_Person.FirstOrDefaultAsync(x => x.Id == donor.GetPerson.Id);
+
+                var foundInStock = dbContext.Tb_StockHold
+                    .SingleOrDefault(x => x.StockHoldId == donor.BloodGroupName);
+
+                var donation = new Donation
                 {
-                    if (person.Age >= 18)
-                    {
-                        if (donor.NextGivenDate < DateTime.Now)
-                        {
-                            if (donor.IsElegilbe == true)
-                            {
-                                donor.LastGivenDate = DateTime.Now;
-                                donor.NextGivenDate = DateTime.Now.AddMonths(3);
-                                donor.RemaingDays = donor.NextGivenDate.Day - DateTime.Now.Day;
+                    BloodGroup = donor.BloodGroupName,
+                    CreatedAt = DateTime.Now,
+                    Qty = 1,
+                    DonorId = donor.Id,
+                };
+                foundInStock.Qty += 1;
+
+                // local estática
+                TimeSpan remainingTime = donor.NextGivenDate - DateTime.Now;
+                donor.LastGivenDate = DateTime.Now;
+                donor.NextGivenDate = DateTime.Now.AddDays(90);
+                donor.RemaingDays = remainingTime.Days;
 
 
-                                var donation = new Donation
-                                {
-                                    BloodGroup = donor.BloodGroupName,
-                                    CreatedAt = DateTime.Now,
-                                    Qty = 1,
-                                    DonorId = donor.Id,
-                                };
+                if (person.Age < 18)
+                    throw new Exception("Dador menor de idade, não pode doar.");
 
-                                var foundInStock = dbContext.Tb_StockHold
-                                    .SingleOrDefault(x => x.StockHoldId == donor.BloodGroupName);
-                                foundInStock.Qty += 1;
+                if (!donor.IsElegilbe)
+                    throw new Exception("Dador não habilitado a doar, rever o estado clínico do dador.");
 
-                                await dbContext.AddRangeAsync(donation);
-                                dbContext.UpdateRange(donor, foundInStock);
-                                await dbContext.SaveChangesAsync();
-                                return message = "doação registrada com sucesso!";
-                            }
-                            else
-                            {
-                                return message = "Doador não aprovado para doação. ";
-                            }
-                        }
-                        else
-                        {
-                            return message = $"Faltam {donor.RemaingDays} dias para voltar a doar. ";
-                        }
-                    }
-                    else
-                    {
-                        return message = "Doador menor de idade, não pode doar.";
-                    }
-                }
-                else
-                {
-                    return message = "Doador não encontrado.";
-                }
+                if (donor.RemaingDays > 0)
+                    throw new Exception($"Ainda faltam {donor.RemaingDays} para a próxima doação. ");
+
+                //persistencia
+                await dbContext.AddAsync(donation);
+                dbContext.UpdateRange(donor, foundInStock);
+                await dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                return message = $"{ex.Message}";
+                throw new Exception(ex.Message);
             }
         }
 

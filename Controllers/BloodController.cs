@@ -8,7 +8,12 @@ namespace siades.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin, Tecnico")]
+[Authorize(Roles = "Admin, Tecnico, Medico")]
+[ProducesResponseType(400)]
+[ProducesResponseType(201)]
+[ProducesResponseType(401)]
+[ProducesResponseType(403)]
+[ProducesResponseType(500)]
 public class BloodController : ControllerBase
 {
     private readonly ILogger<BloodController> _logger;
@@ -22,11 +27,6 @@ public class BloodController : ControllerBase
 
     [HttpPost]
     [Produces("application/json")]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(401)]
-    [ProducesResponseType(403)]
-    [ProducesResponseType(500)]
     public async Task<IActionResult> AddNewBlood([FromBody] BloodDTo entity)
     {
         try

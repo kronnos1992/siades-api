@@ -11,8 +11,10 @@ namespace siades.Controllers
     [ProducesResponseType(400)]
     [ProducesResponseType(403)]
     [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
     [ProducesResponseType(201)]
     [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     public class AuthController : ControllerBase
     {
@@ -53,13 +55,13 @@ namespace siades.Controllers
                 var login = await authRepository.LoginAsync(userDTO);
                 if (!ModelState.IsValid)
                 {
-                    return NotFound($"Usuario {userDTO}, não encontrado. ");
+                    return NotFound($"Usuario {userDTO.Username}, não encontrado. ");
                 }
                 return Ok(login);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Houve erro ao fazer login, por favor tente novamente {ex.Message}");
+                return BadRequest(ex.Message);
             };
         }
 
@@ -88,12 +90,12 @@ namespace siades.Controllers
         {
             try
             {
-                var role = await authRepository.AssignRoleToUser(userId, roleName);
+                await authRepository.AssignRoleToUser(userId, roleName);
                 if (!ModelState.IsValid)
                 {
                     return BadRequest($"Erro ao atribuir roles aos usuários! {ModelState.Values}");
                 }
-                return Created("", $"permissão {roleName} atribuida com sucesso");
+                return Created("", $"permissão {roleName} atribuida com sucesso ao usuário {userId}");
             }
             catch (Exception ex)
             {
@@ -106,16 +108,16 @@ namespace siades.Controllers
         {
             try
             {
-                var user = await authRepository.GetUsers();
-                if (ModelState.IsValid)
+                var users = await authRepository.GetUsers();
+                if (!users.Any())
                 {
-                    return NotFound($"nenhum registro encontrado {ModelState.Values}");
+                    return NotFound("nenhum registro encontrado");
                 }
-                return Ok(user);
+                return Ok(users);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro, por favor tente novamente {ex.Message}");
+                return BadRequest($"Ocorreu um erro, por favor tente novamente , {ex.Message}");
             };
         }
 
@@ -125,50 +127,67 @@ namespace siades.Controllers
         {
             try
             {
-                var user = await authRepository.GetRoles();
-                if (ModelState.IsValid)
+                var roles = await authRepository.GetRoles();
+                if (!roles.Any())
                 {
-                    return NotFound($"nenhum registro encontrado {ModelState.Values}");
+                    return NotFound($"nenhum registro encontrado");
                 }
-                return Ok(user);
+                return Ok(roles);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Ocorreu um erro, por favor tente novamente {ex.Message}");
+                return BadRequest($"Ocorreu um erro, por favor tente novamente,  {ex.Message}");
             };
         }
         [HttpDelete("delete-user")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
-            var user = await authRepository.DeleteUser(userId);
-            if (user)
+            try
             {
+                await authRepository.DeleteUser(userId);
                 return NoContent();
             }
-            return BadRequest();
+            catch (System.Exception ex)
+            {
+                return BadRequest(error: $"Erro ao deletar {ex.Message}");
+            }
         }
         [HttpDelete("delete-role")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
-            var role = await authRepository.DeleteRole(roleId);
-            if (role)
+            try
             {
-                return NoContent();
+                var role = await authRepository.DeleteRole(roleId);
+                if (role)
+                {
+                    return NoContent();
+                }
+                return NotFound();
             }
-            return BadRequest();
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
         }
         [HttpPut("update-user")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateteUser(string userId)
+        public async Task<IActionResult> UpdateteUser(string userId, UserDTO userDTO)
         {
-            var user = await authRepository.UpdateteUser(userId);
-            if (user)
+            try
             {
+                var user = await authRepository.UpdateteUser(userId, userDTO);
+                if (!user)
+                {
+                    return NotFound();
+                }
                 return NoContent();
             }
-            return BadRequest();
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPut("update-role")]
         [Authorize(Roles = "Admin")]

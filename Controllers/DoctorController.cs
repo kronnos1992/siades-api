@@ -26,12 +26,16 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> AddDoctor([FromBody] DoctorDTO entity, int bloodId, int townId)
+        public async Task<IActionResult> AddDoctor([FromForm] DoctorDTO entity, int bloodId, int townId)
         {
             try
             {
-                await repository.NewDoctor(entity, bloodId, townId);
-                return Ok($"{entity} adicionado com sucesso");
+                if (ModelState.IsValid)
+                {
+                    await repository.NewDoctor(entity, bloodId, townId);
+                    return Ok($"{entity.FullName} adicionado com sucesso");
+                }
+                return BadRequest(ModelState);
             }
             catch (Exception ex)
             {

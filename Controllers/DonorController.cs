@@ -26,12 +26,12 @@ namespace siades.Controllers
         [Produces("application/json")]
         [ProducesResponseType(400)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> AddNewDonor([FromBody] DonorDTO entity, int bloodId, int townId)
+        public async Task<IActionResult> AddNewDonor([FromForm] DonorDTO entity, int bloodId, int townId)
         {
             try
             {
                 await repository.NewDonor(entity, bloodId, townId);
-                return Ok($"Dador {entity} inserido com sucesso");
+                return Ok($"Dador {entity.FullName}, inserido com sucesso");
             }
             catch (Exception ex)
             {

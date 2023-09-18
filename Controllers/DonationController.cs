@@ -6,6 +6,15 @@ namespace siades.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    [ProducesResponseType(500)]
+    [Produces("application/json")]
     public class DonationController : ControllerBase
     {
         private readonly IDonationRepository donation;
@@ -16,26 +25,20 @@ namespace siades.Controllers
         }
 
         [HttpPost]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> CreateDonation(int donorId)
         {
             try
             {
                 await donation.CreateDonation(donorId);
-                return Ok("Doação Registrada com sucesso");
+                return CreatedAtAction("CreateDonation", "Doação Registrada");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
         [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200)]
+
         public async Task<IActionResult> List()
         {
             try
@@ -53,10 +56,7 @@ namespace siades.Controllers
             }
         }
         [HttpGet("stock")]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200)]
+
         public async Task<IActionResult> ViewStock()
         {
             try
@@ -75,10 +75,7 @@ namespace siades.Controllers
         }
         [HttpGet]
         [Route("getone")]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200)]
+
         public async Task<IActionResult> List(int id)
         {
             try
@@ -97,10 +94,7 @@ namespace siades.Controllers
         }
         [HttpGet]
         [Route("groupname")]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
+
         public async Task<IActionResult> List(string name)
         {
             try
@@ -120,10 +114,7 @@ namespace siades.Controllers
 
         [HttpGet]
         [Route("donor")]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200)]
+
         public async Task<IActionResult> ListByDonor(int donorId)
         {
             try
@@ -141,9 +132,6 @@ namespace siades.Controllers
             }
         }
         [HttpDelete]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int donorId)
         {
             try

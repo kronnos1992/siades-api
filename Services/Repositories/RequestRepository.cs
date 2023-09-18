@@ -1,4 +1,3 @@
-using Azure.Messaging;
 using Microsoft.EntityFrameworkCore;
 using siades.Database.DataContext;
 using siades.Models;
@@ -33,13 +32,16 @@ namespace siades.Services.Repositories
                         dbContext.UpdateRange(request, reduceInStock);
                         await dbContext.SaveChangesAsync();
                     }
-                    throw new Exception("Quantidade inferior ao recomendado");
+                    else
+                    {
+                        throw new Exception("Quantidade inferior ao recomendado");
+                    }
                 }
-                throw new Exception("Quantidade inferior ao recomendado");
+                throw new NullReferenceException("Pedido não encontrado.");
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro", ex);
+                throw new Exception(ex.Message);
             }
         }
 

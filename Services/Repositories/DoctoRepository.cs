@@ -61,7 +61,9 @@ namespace siades.Services.Repositories
         {
             try
             {
-                var list = await dbcontext.Tb_Doctor.ToListAsync();
+                var list = await dbcontext.Tb_Doctor
+                    .Include(p => p.GetPerson)
+                    .ToListAsync();
                 if (list.Count >= 0)
                 {
                     return list;
@@ -109,56 +111,67 @@ namespace siades.Services.Repositories
             {
                 var blood = dbcontext.Tb_Blood.SingleOrDefault(x => x.Id == bloodId);
                 var townShiep = dbcontext.Tb_TownShiep.SingleOrDefault(x => x.Id == townId);
+                if (blood == null)
+                    throw new NullReferenceException($"Grupo Sanguineo não encontrado");
+                if (townShiep == null)
+                    throw new NullReferenceException("Municipio não encontrado.");
 
-                if (blood != null && townShiep != null)
+                if (!Regex.IsMatch(entity.IdNumber.Trim().ToUpper(), _regex))
+                    throw new ArgumentException("O numero de bilhete identidade foi mal escrito.");
+
+                if (!Regex.IsMatch(entity.EmailAdrress.Trim().ToLower(), _regex2))
+                    throw new ArgumentException("= endereço de email foi mal escrito.");
+
+                var newDoctor = new Doctor
                 {
-                    if (!Regex.IsMatch(entity.IdNumber.Trim().ToUpper(), _regex))
-                        throw new ArgumentException("O numero de bilhete identidade foi mal escrito.");
-
-                    if (!Regex.IsMatch(entity.EmailAdrress.Trim().ToLower(), _regex2))
-                        throw new ArgumentException("= endereço de email foi mal escrito.");
-
-                    var newDoctor = new Doctor
+                    // doctor
+                    CreatedAt = DateTime.Now,
+                    DocNumber = entity.DoctorNumber,
+                    BloodGroupName = blood.BloodGroupName,
+                    //Person
+                    GetPerson = new Person
                     {
-                        // doctor
+
                         CreatedAt = DateTime.Now,
-                        DocNumber = entity.DoctorNumber,
-                        BloodGroupName = blood.BloodGroupName,
-                        //Person
-                        GetPerson = new Person
+                        //person
+                        FullName = entity.FullName,
+                        IdentDocNumber = entity.IdNumber,
+                        TypeIdentNumber = entity.TypeDocId,
+                        BirthDate = entity.BirthDate,
+                        Age = Convert.ToInt16(DateTime.Now.Year - entity.BirthDate.Year),
+                        GetAddress = new Address
                         {
 
                             CreatedAt = DateTime.Now,
-                            //person
-                            FullName = entity.FullName,
-                            IdentDocNumber = entity.IdNumber,
-                            TypeIdentNumber = entity.TypeDocId,
-                            GetAddress = new Address
-                            {
-
-                                CreatedAt = DateTime.Now,
-                                Street = entity.Street,
-                                HouseNumber = entity.HouseNumber,
-                                NeighborHud = entity.NeighborHud,
-                                GetTownShiep = townShiep
-                            },
-                            GetContact = new Contact
-                            {
-
-                                CreatedAt = DateTime.Now,
-                                PhoneNumeber = entity.PhoneNumber,
-                                HousePhoneNumber = entity.HouseNumber,
-                                EmailAdrress = entity.EmailAdrress,
-                            },
-                            GetBlood = blood
+                            Street = entity.Street,
+                            HouseNumber = entity.HouseNumber,
+                            NeighborHud = entity.NeighborHud,
+                            GetTownShiep = townShiep
                         },
+                        GetContact = new Contact
+                        {
 
-                    };
+                            CreatedAt = DateTime.Now,
+                            PhoneNumeber = entity.PhoneNumber,
+                            HousePhoneNumber = entity.HouseNumber,
+                            EmailAdrress = entity.EmailAdrress,
+                        },
+                        GetBlood = blood
+                    },
 
-                    await dbcontext.AddRangeAsync(newDoctor);
-                    await dbcontext.SaveChangesAsync();
+                };
+                if (entity.ImgFile != null)
+                {
+                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(entity.ImgFile.FileName)}";
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await entity.ImgFile.CopyToAsync(stream);
+                    }
+                    newDoctor.GetPerson.ImgDesc = fileName;
                 }
-                throw new Exception("Informe o grupo sanguineo e o municipio.");
+                await dbcontext.AddRangeAsync(newDoctor);
+                await dbcontext.SaveChangesAsync();
             }
             catch (Exception ex)
             {

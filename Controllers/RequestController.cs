@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
 
@@ -6,6 +7,10 @@ namespace siades.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(200)]
     public class RequestController : ControllerBase
     {
         private readonly ILogger<RequestController> _logger;
@@ -19,14 +24,12 @@ namespace siades.Controllers
 
         [HttpPost]
         [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> AddNewRequest([FromBody] RequestDTO entity, int bloodId, int hospitalId, int donorId)
         {
             try
             {
                 await repository.CreateRequest(entity, donorId, hospitalId, bloodId);
-                return Ok($"{entity} registrado com sucesso");
+                return CreatedAtAction("AddNewRequest", "Pedido registrado com sucesso");
             }
             catch (Exception ex)
             {
@@ -36,8 +39,6 @@ namespace siades.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> GetAllAsync()
         {
             try
@@ -57,9 +58,6 @@ namespace siades.Controllers
 
         [HttpGet]
         [Route("getone")]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> GetAsync(int id)
         {
             try
@@ -78,8 +76,6 @@ namespace siades.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> Update([FromBody] RequestDTO entity, int id)
         {
             try
@@ -94,8 +90,6 @@ namespace siades.Controllers
         }
 
         [HttpDelete]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -111,24 +105,20 @@ namespace siades.Controllers
 
         [HttpPut]
         [Route("aprove")]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> AproveRequest(int id)
         {
             try
             {
-                var request = repository.AproveRequest(id);
-                if (request == null)
+                if (!ModelState.IsValid)
                 {
                     return NotFound($"Pedido nº {id} não existe");
                 }
-                await Task.CompletedTask;
+                await repository.AproveRequest(id);
                 return Ok($"Pedido nº {id} aprovado com sucesso");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro, por favor tente novamente {ex.Message}");
+                return BadRequest($"Erro, {ex.Message}");
             }
         }
     }

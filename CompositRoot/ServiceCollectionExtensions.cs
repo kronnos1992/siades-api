@@ -206,11 +206,18 @@ public static class ServiceCollectionExtensions
     {
         //varieable for introduce connection strings
         //builder.Services.AddDbContext<SiadesDbContext>(options =>
-        //    options.UseSqlServer(builder.Configuration.GetConnectionString("production")));
+        //    options.UseSqlServer(builder.Configuration
+        //        .GetConnectionString("production")
+        //    )
+        //    .EnableSensitiveDataLogging()
+        //    .EnableThreadSafetyChecks()
+        //);
 
         //varieable for introduce connection strings
         builder.Services.AddDbContext<SiadesDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
+            .EnableSensitiveDataLogging()
+            .EnableThreadSafetyChecks()
         );
 
         // injectar serviços do automapper

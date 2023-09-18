@@ -16,6 +16,9 @@ public class Person : EntityDefault
     public string Nationality { get; set; }
     public string PlaceOfBirth { get; set; }
 
+    public string ImgDesc { get; set; }
+
+
     //relacionamentos
     public Contact GetContact { get; set; }
     public Address GetAddress { get; set; }
