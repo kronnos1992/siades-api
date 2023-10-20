@@ -8,7 +8,7 @@ public class Country : EntityDefault
     {
         ProvinceList = new HashSet<Province>();
     }
-    public string PhoneCode { get; set; }
+    public string CountryCode { get; set; }
     public string CountryName { get; set; }
 
     // List of provinces

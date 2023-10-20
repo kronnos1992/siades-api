@@ -27,7 +27,8 @@ namespace siades.Controllers
         }
 
         [HttpPost("signup")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
 
         public async Task<IActionResult> SignUp([FromBody] UserDTO userDTO)
         {
@@ -53,7 +54,7 @@ namespace siades.Controllers
             try
             {
                 var login = await authRepository.LoginAsync(userDTO);
-                if (!ModelState.IsValid)
+                if (!login.Success)
                 {
                     return NotFound($"Usuario {userDTO.Username}, não encontrado. ");
                 }
@@ -66,7 +67,8 @@ namespace siades.Controllers
         }
 
         [HttpPost("createrole")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateRole([FromBody] RoleDTO roleDTO)
         {
             try
@@ -85,7 +87,8 @@ namespace siades.Controllers
         }
 
         [HttpPost("signroletouser")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> SignRolesToUsers(string userId, string roleName)
         {
             try
@@ -103,7 +106,8 @@ namespace siades.Controllers
             };
         }
         [HttpGet("get-users")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetUsers()
         {
             try
@@ -122,7 +126,8 @@ namespace siades.Controllers
         }
 
         [HttpGet("get-roles")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetRoles()
         {
             try
@@ -140,7 +145,8 @@ namespace siades.Controllers
             };
         }
         [HttpDelete("delete-user")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             try
@@ -154,7 +160,8 @@ namespace siades.Controllers
             }
         }
         [HttpDelete("delete-role")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
             try
@@ -172,7 +179,8 @@ namespace siades.Controllers
             }
         }
         [HttpPut("update-user")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateteUser(string userId, UserDTO userDTO)
         {
             try
@@ -190,7 +198,8 @@ namespace siades.Controllers
             }
         }
         [HttpPut("update-role")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateteRole(string roleId)
         {
             var role = await authRepository.UpdateteRole(roleId);

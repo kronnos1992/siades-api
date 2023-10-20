@@ -17,7 +17,7 @@ namespace siades.Database.Configurations
                 .IsRequired();
 
             builder
-                .HasIndex(p => p.PhoneCode)
+                .HasIndex(p => p.CountryCode)
                 .IsUnique();
 
             builder
@@ -25,7 +25,7 @@ namespace siades.Database.Configurations
                 .IsUnique();
 
             builder
-                .Property(p => p.PhoneCode)
+                .Property(p => p.CountryCode)
                 .HasMaxLength(5)
                 .IsRequired();
 

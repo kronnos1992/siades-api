@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using siades.Services.DTOs;
 using siades.Services.Interfaces;
@@ -5,6 +6,7 @@ using siades.Services.Interfaces;
 namespace siades.Controllers
 {
     [ApiController]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     public class CountryController : ControllerBase
     {
@@ -85,7 +87,7 @@ namespace siades.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
         [ProducesResponseType(200)]
@@ -102,7 +104,7 @@ namespace siades.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
